@@ -236,6 +236,7 @@ function isHorarioAntes17h(value: unknown): boolean {
 
 /**
  * Verifica se o dia é dia de semana (não é sábado nem domingo)
+ * Aceita tanto "Semana" quanto nomes específicos de dias
  */
 function isDiaDeSemana(dia: unknown): boolean {
   if (!dia) return false;
@@ -246,6 +247,11 @@ function isDiaDeSemana(dia: unknown): boolean {
     .replace(/[\u0300-\u036f]/g, '') // Remove acentos
     .toLowerCase();
 
+  // Se for "semana", é dia de semana
+  if (str === 'semana') {
+    return true;
+  }
+
   // Sábado e Domingo não são dias de semana
   const fimDeSemana = ['sabado', 'sab', 'domingo', 'dom'];
 
@@ -253,7 +259,7 @@ function isDiaDeSemana(dia: unknown): boolean {
     return false;
   }
 
-  // Dias de semana
+  // Dias de semana específicos
   const diasSemana = ['segunda', 'seg', 'terca', 'ter', 'quarta', 'qua', 'quinta', 'qui', 'sexta', 'sex'];
 
   return diasSemana.some(d => str.includes(d));
