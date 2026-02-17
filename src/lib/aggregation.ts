@@ -6,11 +6,11 @@ import type {
 } from './types';
 
 /**
- * Configuração padrão de bônus/penalidade
+ * Configuração padrão (sem bônus/penalidade)
  */
 export const DEFAULT_CONFIG: AggregationConfig = {
-  extraBonusHours: 4,      // +4 horas por registro de Hora Extra
-  atrasoPenaltyHours: 2,   // -2 horas por registro de Atraso
+  extraBonusHours: 0,      // Sem bônus
+  atrasoPenaltyHours: 0,   // Sem penalidade
 };
 
 /**

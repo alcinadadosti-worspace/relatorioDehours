@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Users,
   FileText,
@@ -21,7 +20,6 @@ interface KPICardProps {
   value: string | number;
   subtitle?: string;
   icon: React.ReactNode;
-  trend?: 'up' | 'down' | 'neutral';
   color?: 'blue' | 'green' | 'red' | 'yellow' | 'gray';
 }
 
@@ -59,14 +57,13 @@ function KPICard({ title, value, subtitle, icon, color = 'blue' }: KPICardProps)
 }
 
 export function KPI({ stats }: KPIProps) {
-  const totalBrutoFormatted = formatMinutesToHoursMinutes(stats.totalBrutoMinutes);
-  const totalAjustadoFormatted = formatMinutesToHoursMinutes(stats.totalAjustadoMinutes);
+  const totalFormatted = formatMinutesToHoursMinutes(stats.totalBrutoMinutes);
 
   return (
     <div className="mb-6">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">Resumo Geral</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <KPICard
           title="Colaboradores"
           value={stats.totalCollaborators}
@@ -82,25 +79,17 @@ export function KPI({ stats }: KPIProps) {
         />
 
         <KPICard
-          title="Total Bruto"
-          value={totalBrutoFormatted}
+          title="Total Geral"
+          value={totalFormatted}
           subtitle="Soma das diferenças"
-          icon={<Clock className="w-5 h-5" />}
-          color={stats.totalBrutoMinutes >= 0 ? 'green' : 'red'}
-        />
-
-        <KPICard
-          title="Total Ajustado"
-          value={totalAjustadoFormatted}
-          subtitle="Com bônus/penalidade"
           icon={
-            stats.totalAjustadoMinutes >= 0 ? (
+            stats.totalBrutoMinutes >= 0 ? (
               <TrendingUp className="w-5 h-5" />
             ) : (
               <TrendingDown className="w-5 h-5" />
             )
           }
-          color={stats.totalAjustadoMinutes >= 0 ? 'green' : 'red'}
+          color={stats.totalBrutoMinutes >= 0 ? 'green' : 'red'}
         />
 
         <KPICard

@@ -122,20 +122,8 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
                 onClick={() => handleSort('totalDeltaMinutes')}
               >
                 <div className="flex items-center justify-end gap-1">
-                  Total Bruto
+                  Total
                   <SortIcon field="totalDeltaMinutes" />
-                </div>
-              </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Ajustes
-              </th>
-              <th
-                className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort('adjustedTotalMinutes')}
-              >
-                <div className="flex items-center justify-end gap-1">
-                  Total Ajustado
-                  <SortIcon field="adjustedTotalMinutes" />
                 </div>
               </th>
               <th
@@ -162,11 +150,7 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {paginatedSummaries.map((summary) => {
-              const adjustments =
-                summary.totalExtraBonusMinutes - summary.totalAtrasoPenaltyMinutes;
-
-              return (
+            {paginatedSummaries.map((summary) => (
                 <tr
                   key={summary.id}
                   className="hover:bg-gray-50 transition-colors"
@@ -187,7 +171,7 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-right font-mono">
+                  <td className="px-4 py-3 text-sm text-right font-mono font-semibold">
                     <span
                       className={
                         summary.totalDeltaMinutes >= 0
@@ -196,27 +180,6 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
                       }
                     >
                       {formatMinutesToHoursMinutes(summary.totalDeltaMinutes)}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-right font-mono">
-                    {adjustments !== 0 && (
-                      <span
-                        className={adjustments >= 0 ? 'text-blue-600' : 'text-orange-600'}
-                      >
-                        {formatMinutesToHoursMinutes(adjustments)}
-                      </span>
-                    )}
-                    {adjustments === 0 && <span className="text-gray-400">-</span>}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-right font-mono font-semibold">
-                    <span
-                      className={
-                        summary.adjustedTotalMinutes >= 0
-                          ? 'text-green-600'
-                          : 'text-red-600'
-                      }
-                    >
-                      {formatMinutesToHoursMinutes(summary.adjustedTotalMinutes)}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-sm text-center text-gray-600">
@@ -239,8 +202,7 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
                     </button>
                   </td>
                 </tr>
-              );
-            })}
+            ))}
           </tbody>
         </table>
       </div>

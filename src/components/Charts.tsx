@@ -9,22 +9,22 @@ interface RankingChartProps {
   title?: string;
 }
 
-export function RankingChart({ summaries, showAll = false, title = 'Ranking por Total Ajustado' }: RankingChartProps) {
+export function RankingChart({ summaries, showAll = false, title = 'Ranking por Total' }: RankingChartProps) {
   const option = useMemo(() => {
     // Ordena e pega top/bottom
-    const sorted = [...summaries].sort((a, b) => b.adjustedTotalMinutes - a.adjustedTotalMinutes);
+    const sorted = [...summaries].sort((a, b) => b.totalDeltaMinutes - a.totalDeltaMinutes);
 
     let data: CollaboratorSummary[];
     if (showAll) {
       data = sorted;
     } else {
-      const top10 = sorted.filter((s) => s.adjustedTotalMinutes > 0).slice(0, 10);
-      const bottom10 = sorted.filter((s) => s.adjustedTotalMinutes < 0).slice(-10);
+      const top10 = sorted.filter((s) => s.totalDeltaMinutes > 0).slice(0, 10);
+      const bottom10 = sorted.filter((s) => s.totalDeltaMinutes < 0).slice(-10);
       data = [...top10, ...bottom10];
     }
 
     const names = data.map((s) => `${s.colaborador} (${s.id})`);
-    const values = data.map((s) => Math.round(s.adjustedTotalMinutes));
+    const values = data.map((s) => Math.round(s.totalDeltaMinutes));
 
     return {
       title: {

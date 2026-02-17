@@ -1,17 +1,16 @@
 import { useRef, useCallback } from 'react';
 import { FileDown, Printer } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
-import type { CollaboratorSummary, GlobalStats, AggregationConfig } from '../lib/types';
+import type { CollaboratorSummary, GlobalStats } from '../lib/types';
 import { formatMinutesToHoursMinutes, formatMinutesToDecimalHours } from '../lib/types';
 
 interface PDFReportProps {
   summaries: CollaboratorSummary[];
   stats: GlobalStats;
-  config: AggregationConfig;
   fileName: string | null;
 }
 
-export function PDFReport({ summaries, stats, config, fileName }: PDFReportProps) {
+export function PDFReport({ summaries, stats, fileName }: PDFReportProps) {
   const reportRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useCallback(() => {
@@ -22,14 +21,14 @@ export function PDFReport({ summaries, stats, config, fileName }: PDFReportProps
   const dateStr = now.toLocaleDateString('pt-BR');
   const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-  // Ordena summaries
-  const sortedByAdjusted = [...summaries].sort(
-    (a, b) => b.adjustedTotalMinutes - a.adjustedTotalMinutes
+  // Ordena summaries por total
+  const sortedByTotal = [...summaries].sort(
+    (a, b) => b.totalDeltaMinutes - a.totalDeltaMinutes
   );
 
   // Top 10 positivos e negativos para o gráfico
-  const top10Positive = sortedByAdjusted.filter((s) => s.adjustedTotalMinutes > 0).slice(0, 10);
-  const top10Negative = sortedByAdjusted.filter((s) => s.adjustedTotalMinutes < 0).slice(-10);
+  const top10Positive = sortedByTotal.filter((s) => s.totalDeltaMinutes > 0).slice(0, 10);
+  const top10Negative = sortedByTotal.filter((s) => s.totalDeltaMinutes < 0).slice(-10);
   const chartData = [...top10Positive, ...top10Negative];
 
   // Opções do gráfico de barras
@@ -61,9 +60,9 @@ export function PDFReport({ summaries, stats, config, fileName }: PDFReportProps
         type: 'bar',
         data: chartData
           .map((s) => ({
-            value: s.adjustedTotalMinutes,
+            value: s.totalDeltaMinutes,
             itemStyle: {
-              color: s.adjustedTotalMinutes >= 0 ? '#22c55e' : '#ef4444',
+              color: s.totalDeltaMinutes >= 0 ? '#22c55e' : '#ef4444',
             },
           }))
           .reverse(),
@@ -175,11 +174,6 @@ export function PDFReport({ summaries, stats, config, fileName }: PDFReportProps
               </div>
             </div>
 
-            <div className="cover-config">
-              <p className="config-title">Configuração de Ajustes</p>
-              <p>Bônus Hora Extra: +{config.extraBonusHours}h por registro</p>
-              <p>Penalidade Atraso: -{config.atrasoPenaltyHours}h por registro</p>
-            </div>
           </div>
         </div>
 
@@ -199,20 +193,15 @@ export function PDFReport({ summaries, stats, config, fileName }: PDFReportProps
               <span className="kpi-value">{stats.totalRecords}</span>
             </div>
             <div className="kpi-card">
-              <span className="kpi-label">Total Bruto</span>
+              <span className="kpi-label">Total Geral</span>
               <span className="kpi-value">
                 {formatMinutesToHoursMinutes(stats.totalBrutoMinutes)}
               </span>
               <span className="kpi-sub">{formatMinutesToDecimalHours(stats.totalBrutoMinutes)}</span>
             </div>
             <div className="kpi-card">
-              <span className="kpi-label">Total Ajustado</span>
-              <span className="kpi-value">
-                {formatMinutesToHoursMinutes(stats.totalAjustadoMinutes)}
-              </span>
-              <span className="kpi-sub">
-                {formatMinutesToDecimalHours(stats.totalAjustadoMinutes)}
-              </span>
+              <span className="kpi-label">Sem Dados</span>
+              <span className="kpi-value">{stats.totalSemDados}</span>
             </div>
           </div>
 
@@ -268,34 +257,23 @@ export function PDFReport({ summaries, stats, config, fileName }: PDFReportProps
               <tr>
                 <th>ID</th>
                 <th>Colaborador</th>
-                <th className="right">Bruto</th>
-                <th className="right">Ajustes</th>
                 <th className="right">Total</th>
-                <th className="center">Reg.</th>
-                <th className="center">S/D</th>
+                <th className="center">Registros</th>
+                <th className="center">Sem Dados</th>
               </tr>
             </thead>
             <tbody>
-              {sortedByAdjusted.map((s) => {
-                const adjustments = s.totalExtraBonusMinutes - s.totalAtrasoPenaltyMinutes;
-                return (
+              {sortedByTotal.map((s) => (
                   <tr key={s.id}>
                     <td>{s.id}</td>
                     <td>{s.colaborador}</td>
-                    <td className="right mono">
+                    <td className={`right mono bold ${s.totalDeltaMinutes >= 0 ? 'green' : 'red'}`}>
                       {formatMinutesToHoursMinutes(s.totalDeltaMinutes)}
-                    </td>
-                    <td className="right mono">
-                      {adjustments !== 0 ? formatMinutesToHoursMinutes(adjustments) : '-'}
-                    </td>
-                    <td className={`right mono bold ${s.adjustedTotalMinutes >= 0 ? 'green' : 'red'}`}>
-                      {formatMinutesToHoursMinutes(s.adjustedTotalMinutes)}
                     </td>
                     <td className="center">{s.countDias}</td>
                     <td className="center">{s.countSemDados || '-'}</td>
                   </tr>
-                );
-              })}
+              ))}
             </tbody>
           </table>
         </div>

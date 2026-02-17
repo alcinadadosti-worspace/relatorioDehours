@@ -1,20 +1,16 @@
-import { Search, Filter, Settings2 } from 'lucide-react';
-import type { FilterState, AggregationConfig, GlobalStats } from '../lib/types';
+import { Search, Filter } from 'lucide-react';
+import type { FilterState, GlobalStats } from '../lib/types';
 
 interface FiltersProps {
   filters: FilterState;
-  config: AggregationConfig;
   stats: GlobalStats | null;
   onFilterChange: (filters: Partial<FilterState>) => void;
-  onConfigChange: (config: Partial<AggregationConfig>) => void;
 }
 
 export function Filters({
   filters,
-  config,
   stats,
   onFilterChange,
-  onConfigChange,
 }: FiltersProps) {
   const classificacoes = stats ? Object.keys(stats.byClassificacao) : [];
 
@@ -70,46 +66,6 @@ export function Filters({
               </option>
             ))}
           </select>
-        </div>
-
-        {/* Separador */}
-        <div className="hidden lg:block w-px h-10 bg-gray-300" />
-
-        {/* Configurações de Bônus/Penalidade */}
-        <div className="flex items-center gap-3">
-          <Settings2 className="w-4 h-4 text-gray-500" />
-
-          <div className="w-32">
-            <label className="block text-xs font-medium text-gray-600 mb-1">
-              Bônus H.Extra (h)
-            </label>
-            <input
-              type="number"
-              value={config.extraBonusHours}
-              onChange={(e) =>
-                onConfigChange({ extraBonusHours: parseFloat(e.target.value) || 0 })
-              }
-              min="0"
-              step="0.5"
-              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-            />
-          </div>
-
-          <div className="w-32">
-            <label className="block text-xs font-medium text-gray-600 mb-1">
-              Penalidade Atraso (h)
-            </label>
-            <input
-              type="number"
-              value={config.atrasoPenaltyHours}
-              onChange={(e) =>
-                onConfigChange({ atrasoPenaltyHours: parseFloat(e.target.value) || 0 })
-              }
-              min="0"
-              step="0.5"
-              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-            />
-          </div>
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { ArrowLeft, User, Clock, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, User, Clock, AlertTriangle } from 'lucide-react';
 import type { CollaboratorSummary } from '../lib/types';
 import { formatMinutesToHoursMinutes } from '../lib/types';
 import { TimelineChart, CollaboratorClassificacaoChart } from './Charts';
@@ -10,8 +10,6 @@ interface CollaboratorDetailProps {
 }
 
 export function CollaboratorDetail({ summary, onBack }: CollaboratorDetailProps) {
-  const adjustments = summary.totalExtraBonusMinutes - summary.totalAtrasoPenaltyMinutes;
-
   return (
     <div>
       {/* Header */}
@@ -43,13 +41,13 @@ export function CollaboratorDetail({ summary, onBack }: CollaboratorDetailProps)
             </div>
 
             <div className="text-right">
-              <p className="text-sm text-gray-500">Total Ajustado</p>
+              <p className="text-sm text-gray-500">Total</p>
               <p
                 className={`text-3xl font-bold ${
-                  summary.adjustedTotalMinutes >= 0 ? 'text-green-600' : 'text-red-600'
+                  summary.totalDeltaMinutes >= 0 ? 'text-green-600' : 'text-red-600'
                 }`}
               >
-                {formatMinutesToHoursMinutes(summary.adjustedTotalMinutes)}
+                {formatMinutesToHoursMinutes(summary.totalDeltaMinutes)}
               </p>
             </div>
           </div>
@@ -57,11 +55,11 @@ export function CollaboratorDetail({ summary, onBack }: CollaboratorDetailProps)
       </div>
 
       {/* KPIs do colaborador */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="flex items-center gap-2 text-gray-500 mb-1">
             <Clock className="w-4 h-4" />
-            <span className="text-xs">Total Bruto</span>
+            <span className="text-xs">Total</span>
           </div>
           <p
             className={`text-xl font-bold ${
@@ -69,41 +67,6 @@ export function CollaboratorDetail({ summary, onBack }: CollaboratorDetailProps)
             }`}
           >
             {formatMinutesToHoursMinutes(summary.totalDeltaMinutes)}
-          </p>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <div className="flex items-center gap-2 text-gray-500 mb-1">
-            <TrendingUp className="w-4 h-4" />
-            <span className="text-xs">Bônus H.Extra</span>
-          </div>
-          <p className="text-xl font-bold text-blue-600">
-            +{formatMinutesToHoursMinutes(summary.totalExtraBonusMinutes)}
-          </p>
-          <p className="text-xs text-gray-400">{summary.countHoraExtra} registros</p>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <div className="flex items-center gap-2 text-gray-500 mb-1">
-            <TrendingDown className="w-4 h-4" />
-            <span className="text-xs">Penalidade Atraso</span>
-          </div>
-          <p className="text-xl font-bold text-orange-600">
-            -{formatMinutesToHoursMinutes(summary.totalAtrasoPenaltyMinutes)}
-          </p>
-          <p className="text-xs text-gray-400">{summary.countAtraso} registros</p>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <div className="flex items-center gap-2 text-gray-500 mb-1">
-            <span className="text-xs">Ajustes Total</span>
-          </div>
-          <p
-            className={`text-xl font-bold ${
-              adjustments >= 0 ? 'text-blue-600' : 'text-orange-600'
-            }`}
-          >
-            {formatMinutesToHoursMinutes(adjustments)}
           </p>
         </div>
 
@@ -121,6 +84,11 @@ export function CollaboratorDetail({ summary, onBack }: CollaboratorDetailProps)
           >
             {summary.countSemDados}
           </p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
+          <div className="text-xs text-gray-500 mb-1">Hora Extra</div>
+          <p className="text-xl font-bold text-blue-600">{summary.countHoraExtra}</p>
         </div>
       </div>
 

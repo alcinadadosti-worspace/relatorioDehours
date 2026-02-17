@@ -7,7 +7,9 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Implementa aplicação completa de Relatório de Horas\n\n- Upload de Excel \\(.xlsx\\) com suporte a múltiplas abas\n- Parser robusto da coluna Diferenca \\(+2h30min, -15min, etc.\\)\n- Agrupamento por ID de colaborador com KPIs\n- Gráficos interativos com ECharts \\(ranking, pizza, timeline\\)\n- Filtros por nome, ID e classificação\n- Configuração de bônus/penalidade ajustável\n- Visualização detalhada por colaborador\n- Exportação de PDF com design profissional\n- Deploy configurado para Render \\(render.yaml\\)\n\nStack: Vite + React + TypeScript + Tailwind + SheetJS + ECharts\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git branch:*)",
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(node analyze.js:*)",
+      "Bash(node verify.cjs:*)"
     ]
   }
 }

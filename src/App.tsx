@@ -5,7 +5,6 @@ import * as XLSX from 'xlsx';
 import type {
   AppState,
   FilterState,
-  AggregationConfig,
   SheetInfo,
   ParsedRecord,
 } from './lib/types';
@@ -43,7 +42,7 @@ export default function App() {
   const [warnings, setWarnings] = useState<string[]>([]);
 
   // Configuração e filtros
-  const [config, setConfig] = useState<AggregationConfig>(DEFAULT_CONFIG);
+  const [config] = useState(DEFAULT_CONFIG);
   const [filters, setFilters] = useState<FilterState>({
     searchName: '',
     searchId: '',
@@ -132,10 +131,6 @@ export default function App() {
 
   const handleFilterChange = useCallback((newFilters: Partial<FilterState>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
-  }, []);
-
-  const handleConfigChange = useCallback((newConfig: Partial<AggregationConfig>) => {
-    setConfig((prev) => ({ ...prev, ...newConfig }));
   }, []);
 
   const handleSelectCollaborator = useCallback((id: string) => {
@@ -269,10 +264,8 @@ export default function App() {
             {/* Filtros */}
             <Filters
               filters={filters}
-              config={config}
               stats={globalStats}
               onFilterChange={handleFilterChange}
-              onConfigChange={handleConfigChange}
             />
 
             {/* Gráficos */}
@@ -318,7 +311,6 @@ export default function App() {
           <PDFReport
             summaries={summaries}
             stats={globalStats}
-            config={config}
             fileName={fileName}
           />
         )}
