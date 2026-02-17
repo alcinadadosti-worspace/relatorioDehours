@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo } from 'react';
-import { Clock, FileSpreadsheet, BarChart3, FileText } from 'lucide-react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { Clock, FileSpreadsheet, BarChart3, FileText, RefreshCw } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 import type {
@@ -27,13 +27,17 @@ import {
   CollaboratorDetail,
 } from './components';
 
+// Nome do arquivo padrão na pasta public
+const DEFAULT_DATA_FILE = '/dados.xlsx';
+
 type ViewMode = 'dashboard' | 'detail' | 'report';
 
 export default function App() {
   // Estados principais
-  const [appState, setAppState] = useState<AppState>('empty');
+  const [appState, setAppState] = useState<AppState>('loading');
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [isDefaultFile, setIsDefaultFile] = useState(false);
 
   // Dados do Excel
   const [workbook, setWorkbook] = useState<XLSX.WorkBook | null>(null);
@@ -53,6 +57,51 @@ export default function App() {
   // View
   const [viewMode, setViewMode] = useState<ViewMode>('dashboard');
   const [showAllRanking, setShowAllRanking] = useState(false);
+
+  // Carrega arquivo padrão ao iniciar
+  const loadDefaultFile = useCallback(async () => {
+    setAppState('loading');
+    setError(null);
+    setIsDefaultFile(true);
+
+    try {
+      const response = await fetch(DEFAULT_DATA_FILE);
+      if (!response.ok) {
+        throw new Error('Arquivo de dados não encontrado');
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const data = new Uint8Array(arrayBuffer);
+      const wb = XLSX.read(data, { type: 'array', cellDates: true });
+
+      setWorkbook(wb);
+      setFileName('dados.xlsx');
+
+      // Importa todas as abas válidas automaticamente
+      const allSheets = wb.SheetNames;
+      const result = importSheets(wb, allSheets);
+
+      if (result.records.length > 0) {
+        setRecords(result.records);
+        setWarnings(result.warnings);
+        setSheets(result.sheets);
+        setAppState('ready');
+        setViewMode('dashboard');
+      } else {
+        setError('Nenhum registro encontrado no arquivo');
+        setAppState('error');
+      }
+    } catch (err) {
+      // Se não encontrar arquivo padrão, mostra tela de upload
+      setAppState('empty');
+      setIsDefaultFile(false);
+    }
+  }, []);
+
+  // Carrega arquivo padrão ao montar o componente
+  useEffect(() => {
+    loadDefaultFile();
+  }, [loadDefaultFile]);
 
   // Calcula summaries e stats
   const summaries = useMemo(() => {
@@ -79,6 +128,7 @@ export default function App() {
     setAppState('loading');
     setError(null);
     setFileName(file.name);
+    setIsDefaultFile(false);
 
     try {
       const result = await readExcelFile(file);
@@ -158,7 +208,18 @@ export default function App() {
       selectedCollaboratorId: null,
     });
     setViewMode('dashboard');
+    setIsDefaultFile(false);
   }, []);
+
+  const handleRefresh = useCallback(() => {
+    setFilters({
+      searchName: '',
+      searchId: '',
+      classificacao: 'todas',
+      selectedCollaboratorId: null,
+    });
+    loadDefaultFile();
+  }, [loadDefaultFile]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -206,12 +267,23 @@ export default function App() {
 
                 <div className="w-px h-8 bg-gray-300 mx-2" />
 
+                {isDefaultFile && (
+                  <button
+                    onClick={handleRefresh}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
+                    title="Recarregar dados"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Atualizar
+                  </button>
+                )}
+
                 <button
                   onClick={handleReset}
                   className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <FileSpreadsheet className="w-4 h-4" />
-                  Novo arquivo
+                  {isDefaultFile ? 'Outro arquivo' : 'Novo arquivo'}
                 </button>
               </div>
             )}
@@ -221,8 +293,16 @@ export default function App() {
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Estado vazio ou carregando */}
-        {(appState === 'empty' || appState === 'loading' || appState === 'error') && (
+        {/* Estado carregando arquivo padrão */}
+        {appState === 'loading' && isDefaultFile && (
+          <div className="py-12 flex flex-col items-center justify-center">
+            <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-600">Carregando dados...</p>
+          </div>
+        )}
+
+        {/* Estado vazio ou carregando upload manual */}
+        {(appState === 'empty' || (appState === 'loading' && !isDefaultFile) || appState === 'error') && (
           <div className="py-12">
             <Upload
               onFileSelect={handleFileSelect}

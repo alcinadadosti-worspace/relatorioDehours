@@ -24,4 +24,7 @@ npm-debug.log*
 # Cache
 .cache/
 *.tsbuildinfo
+
+# Excel files (except public data)
 *.xlsx
+!public/dados.xlsx
