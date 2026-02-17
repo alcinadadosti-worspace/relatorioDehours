@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
+  Clock,
 } from 'lucide-react';
 import type { GlobalStats } from '../lib/types';
 import { formatMinutesToHoursMinutes } from '../lib/types';
@@ -62,7 +63,7 @@ export function KPI({ stats }: KPIProps) {
     <div className="mb-6">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">Resumo Geral</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <KPICard
           title="Colaboradores"
           value={stats.totalCollaborators}
@@ -89,6 +90,14 @@ export function KPI({ stats }: KPIProps) {
             )
           }
           color={stats.totalBrutoMinutes >= 0 ? 'green' : 'red'}
+        />
+
+        <KPICard
+          title="Ajustes"
+          value={stats.totalAjuste}
+          subtitle="Não contabilizados"
+          icon={<Clock className="w-5 h-5" />}
+          color={stats.totalAjuste > 0 ? 'yellow' : 'gray'}
         />
 
         <KPICard

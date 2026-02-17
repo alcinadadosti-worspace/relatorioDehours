@@ -118,6 +118,7 @@ export function aggregateByCollaborator(
     let countDias = 0;
     let countSemDados = 0;
     let countParseErrors = 0;
+    let countAjuste = 0;
     let countHoraExtra = 0;
     let countAtraso = 0;
     let countNormal = 0;
@@ -126,7 +127,13 @@ export function aggregateByCollaborator(
     let totalAtrasoPenaltyMinutes = 0;
 
     for (const record of groupRecords) {
-      // Soma diferença bruta
+      // Se é ajuste (entrada após 10h), não contabiliza no total
+      if (record.isAjuste) {
+        countAjuste++;
+        continue; // Pula para o próximo registro sem somar
+      }
+
+      // Soma diferença bruta (apenas se não for ajuste)
       totalDeltaMinutes += record.deltaMinutes;
 
       // Contadores
@@ -168,6 +175,7 @@ export function aggregateByCollaborator(
       countDias,
       countSemDados,
       countParseErrors,
+      countAjuste,
       countHoraExtra,
       countAtraso,
       countNormal,
@@ -203,6 +211,7 @@ export function calculateGlobalStats(
   let totalAjustadoMinutes = 0;
   let totalSemDados = 0;
   let totalParseErrors = 0;
+  let totalAjuste = 0;
   let countHoraExtra = 0;
   let countAtraso = 0;
   let countNormal = 0;
@@ -211,6 +220,12 @@ export function calculateGlobalStats(
   const byClassificacao: Record<string, number> = {};
 
   for (const record of records) {
+    // Conta ajustes (não contabilizados no total)
+    if (record.isAjuste) {
+      totalAjuste++;
+      continue; // Não soma no bruto
+    }
+
     totalBrutoMinutes += record.deltaMinutes;
 
     if (record.isMissing) {
@@ -246,6 +261,7 @@ export function calculateGlobalStats(
     totalAjustadoMinutes,
     totalSemDados,
     totalParseErrors,
+    totalAjuste,
     countHoraExtra,
     countAtraso,
     countNormal,

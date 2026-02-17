@@ -31,6 +31,9 @@ export interface ParsedRecord {
   isMissing: boolean;
   parseError: boolean;
 
+  // Flag de ajuste: entrada após 10h não contabiliza
+  isAjuste: boolean;
+
   // Campos opcionais parseados
   data?: Date;
   dataString?: string;
@@ -51,11 +54,14 @@ export interface CollaboratorSummary {
   colaborador: string;
   alternativeNames: string[];
 
-  // Totais brutos
+  // Totais brutos (não inclui registros com isAjuste)
   totalDeltaMinutes: number;
   countDias: number;
   countSemDados: number;
   countParseErrors: number;
+
+  // Contagem de ajustes (entrada após 10h - não contabilizados)
+  countAjuste: number;
 
   // Ajustes por classificação
   countHoraExtra: number;
@@ -85,6 +91,7 @@ export interface GlobalStats {
   totalAjustadoMinutes: number;
   totalSemDados: number;
   totalParseErrors: number;
+  totalAjuste: number;  // Registros com entrada após 10h (não contabilizados)
 
   countHoraExtra: number;
   countAtraso: number;

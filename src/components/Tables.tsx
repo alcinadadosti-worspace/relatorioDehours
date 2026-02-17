@@ -303,7 +303,7 @@ export function RecordsTable({ records }: RecordsTableProps) {
                 key={`${record.sourceSheet}-${record.rowIndex}-${idx}`}
                 className={`hover:bg-gray-50 ${record.parseError ? 'bg-red-50' : ''} ${
                   record.isMissing ? 'bg-yellow-50' : ''
-                }`}
+                } ${record.isAjuste ? 'bg-orange-50' : ''}`}
               >
                 <td className="px-3 py-2.5 text-sm text-gray-900">
                   {record.data ? formatDate(record.data) : record.dataString || '-'}
@@ -331,7 +331,11 @@ export function RecordsTable({ records }: RecordsTableProps) {
                   {record.saida || '-'}
                 </td>
                 <td className="px-3 py-2.5 text-sm text-right font-mono">
-                  {record.isMissing ? (
+                  {record.isAjuste ? (
+                    <span className="text-orange-600 font-semibold" title="Registro não contabilizado (Entrada &gt;10h ou Intervalo/Retorno &gt;17h)">
+                      Ajuste
+                    </span>
+                  ) : record.isMissing ? (
                     <span className="text-yellow-600">Sem dados</span>
                   ) : record.parseError ? (
                     <span className="text-red-600" title={record.diferencaRaw}>

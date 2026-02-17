@@ -55,7 +55,7 @@ export function CollaboratorDetail({ summary, onBack }: CollaboratorDetailProps)
       </div>
 
       {/* KPIs do colaborador */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="flex items-center gap-2 text-gray-500 mb-1">
             <Clock className="w-4 h-4" />
@@ -73,6 +73,17 @@ export function CollaboratorDetail({ summary, onBack }: CollaboratorDetailProps)
         <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-xs text-gray-500 mb-1">Registros</div>
           <p className="text-xl font-bold text-gray-800">{summary.countDias}</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
+          <div className="text-xs text-gray-500 mb-1">Ajustes</div>
+          <p
+            className={`text-xl font-bold ${
+              summary.countAjuste > 0 ? 'text-orange-600' : 'text-gray-400'
+            }`}
+          >
+            {summary.countAjuste}
+          </p>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-4">

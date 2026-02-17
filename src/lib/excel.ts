@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import type { RawRecord, ParsedRecord, SheetInfo, ImportResult } from './types';
-import { parseDiferenca, parseDate } from './time';
+import { parseDiferenca, parseDate, isRegistroAjuste } from './time';
 
 // Colunas obrigatórias
 const REQUIRED_COLUMNS = ['Colaborador', 'ID', 'Classificacao', 'Diferenca'];
@@ -214,6 +214,13 @@ export function importSheets(
       const data = parseDate(dataValue);
       const dataString = dataValue ? String(dataValue) : undefined;
 
+      // Verifica se deve ser marcado como ajuste (não contabiliza)
+      // Regras: Entrada > 10h, Intervalo > 17h, Retorno > 17h
+      const entradaValue = rawRow.Entrada;
+      const intervaloValue = rawRow.Intervalo;
+      const retornoValue = rawRow.Retorno;
+      const isAjuste = isRegistroAjuste(entradaValue, intervaloValue, retornoValue);
+
       // Cria o registro parseado
       const record: ParsedRecord = {
         id,
@@ -223,6 +230,7 @@ export function importSheets(
         deltaMinutes,
         isMissing,
         parseError,
+        isAjuste,
         data: data ?? undefined,
         dataString,
         gestor: rawRow.Gestor ? String(rawRow.Gestor).trim() : undefined,

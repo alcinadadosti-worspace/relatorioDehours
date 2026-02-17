@@ -174,3 +174,82 @@ export function formatDateISO(date: Date | null): string {
 
   return `${year}-${month}-${day}`;
 }
+
+/**
+ * Extrai hora e minuto de um valor de horário
+ * Retorna null se não conseguir fazer o parse
+ */
+function parseHorario(value: unknown): { hour: number; minute: number } | null {
+  if (!value) return null;
+
+  const str = String(value).trim();
+  if (!str || str === '-') return null;
+
+  // Formatos aceitos: HH:MM, HH:MM:SS, HHhMM, HH h MM
+  // Remove espaços e converte 'h' para ':'
+  const normalized = str.replace(/\s+/g, '').replace(/h/gi, ':');
+
+  // Tenta extrair hora e minuto
+  const match = normalized.match(/^(\d{1,2}):(\d{2})/);
+  if (match) {
+    const hour = parseInt(match[1], 10);
+    const minute = parseInt(match[2], 10);
+    return { hour, minute };
+  }
+
+  return null;
+}
+
+/**
+ * Verifica se o horário de entrada é após 10:00
+ * Retorna true se a entrada for depois das 10h (deve ser marcado como ajuste)
+ */
+export function isEntradaApos10h(entrada: unknown): boolean {
+  const horario = parseHorario(entrada);
+  if (!horario) return false;
+
+  // Verifica se é após 10:00
+  return horario.hour > 10 || (horario.hour === 10 && horario.minute > 0);
+}
+
+/**
+ * Verifica se um horário é após 17:00
+ */
+function isHorarioApos17h(value: unknown): boolean {
+  const horario = parseHorario(value);
+  if (!horario) return false;
+
+  // Verifica se é após 17:00
+  return horario.hour > 17 || (horario.hour === 17 && horario.minute > 0);
+}
+
+/**
+ * Verifica se o registro deve ser marcado como ajuste
+ * Regras:
+ * - Entrada após 10:00 -> Ajuste
+ * - Intervalo após 17:00 -> Ajuste
+ * - Retorno após 17:00 -> Ajuste
+ * - Saída NÃO é considerada (pode ser após 17:00)
+ */
+export function isRegistroAjuste(
+  entrada: unknown,
+  intervalo: unknown,
+  retorno: unknown
+): boolean {
+  // Entrada após 10h
+  if (isEntradaApos10h(entrada)) {
+    return true;
+  }
+
+  // Intervalo após 17h
+  if (isHorarioApos17h(intervalo)) {
+    return true;
+  }
+
+  // Retorno após 17h
+  if (isHorarioApos17h(retorno)) {
+    return true;
+  }
+
+  return false;
+}
