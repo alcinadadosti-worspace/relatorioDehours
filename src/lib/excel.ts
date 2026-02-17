@@ -215,11 +215,13 @@ export function importSheets(
       const dataString = dataValue ? String(dataValue) : undefined;
 
       // Verifica se deve ser marcado como ajuste (não contabiliza)
-      // Regras: Entrada > 10h, Intervalo > 17h, Retorno > 17h
+      // Regras: Entrada > 10h, Intervalo > 17h, Retorno > 17h, Saída < 17h em dia de semana
       const entradaValue = rawRow.Entrada;
       const intervaloValue = rawRow.Intervalo;
       const retornoValue = rawRow.Retorno;
-      const isAjuste = isRegistroAjuste(entradaValue, intervaloValue, retornoValue);
+      const saidaValue = rawRow.Saida;
+      const diaValue = rawRow.Dia;
+      const isAjuste = isRegistroAjuste(entradaValue, intervaloValue, retornoValue, saidaValue, diaValue);
 
       // Cria o registro parseado
       const record: ParsedRecord = {

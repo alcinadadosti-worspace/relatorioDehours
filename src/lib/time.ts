@@ -224,17 +224,55 @@ function isHorarioApos17h(value: unknown): boolean {
 }
 
 /**
+ * Verifica se um horário é antes das 17:00
+ */
+function isHorarioAntes17h(value: unknown): boolean {
+  const horario = parseHorario(value);
+  if (!horario) return false;
+
+  // Verifica se é antes das 17:00
+  return horario.hour < 17;
+}
+
+/**
+ * Verifica se o dia é dia de semana (não é sábado nem domingo)
+ */
+function isDiaDeSemana(dia: unknown): boolean {
+  if (!dia) return false;
+
+  const str = String(dia)
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .toLowerCase();
+
+  // Sábado e Domingo não são dias de semana
+  const fimDeSemana = ['sabado', 'sab', 'domingo', 'dom'];
+
+  if (fimDeSemana.some(d => str.includes(d))) {
+    return false;
+  }
+
+  // Dias de semana
+  const diasSemana = ['segunda', 'seg', 'terca', 'ter', 'quarta', 'qua', 'quinta', 'qui', 'sexta', 'sex'];
+
+  return diasSemana.some(d => str.includes(d));
+}
+
+/**
  * Verifica se o registro deve ser marcado como ajuste
  * Regras:
  * - Entrada após 10:00 -> Ajuste
  * - Intervalo após 17:00 -> Ajuste
  * - Retorno após 17:00 -> Ajuste
- * - Saída NÃO é considerada (pode ser após 17:00)
+ * - Saída antes das 17:00 em dia de semana -> Ajuste (Sábado OK)
  */
 export function isRegistroAjuste(
   entrada: unknown,
   intervalo: unknown,
-  retorno: unknown
+  retorno: unknown,
+  saida: unknown,
+  dia: unknown
 ): boolean {
   // Entrada após 10h
   if (isEntradaApos10h(entrada)) {
@@ -248,6 +286,11 @@ export function isRegistroAjuste(
 
   // Retorno após 17h
   if (isHorarioApos17h(retorno)) {
+    return true;
+  }
+
+  // Saída antes das 17h em dia de semana
+  if (isHorarioAntes17h(saida) && isDiaDeSemana(dia)) {
     return true;
   }
 
