@@ -25,28 +25,36 @@ interface KPICardProps {
 
 function KPICard({ title, value, subtitle, icon, color = 'blue' }: KPICardProps) {
   const colorClasses = {
-    blue: 'bg-blue-50 text-blue-600 border-blue-200',
-    green: 'bg-green-50 text-green-600 border-green-200',
-    red: 'bg-red-50 text-red-600 border-red-200',
-    yellow: 'bg-yellow-50 text-yellow-600 border-yellow-200',
-    gray: 'bg-gray-50 text-gray-600 border-gray-200',
+    blue: 'border-blue-500/30',
+    green: 'border-green-500/30',
+    red: 'border-red-500/30',
+    yellow: 'border-yellow-500/30',
+    gray: 'border-dark-600',
   };
 
   const iconColorClasses = {
-    blue: 'bg-blue-100 text-blue-600',
-    green: 'bg-green-100 text-green-600',
-    red: 'bg-red-100 text-red-600',
-    yellow: 'bg-yellow-100 text-yellow-600',
-    gray: 'bg-gray-100 text-gray-600',
+    blue: 'bg-blue-500/20 text-blue-400',
+    green: 'bg-green-500/20 text-green-400',
+    red: 'bg-red-500/20 text-red-400',
+    yellow: 'bg-yellow-500/20 text-yellow-400',
+    gray: 'bg-dark-600 text-dark-300',
+  };
+
+  const valueColorClasses = {
+    blue: 'text-blue-400',
+    green: 'text-green-400',
+    red: 'text-red-400',
+    yellow: 'text-yellow-400',
+    gray: 'text-white',
   };
 
   return (
-    <div className={`bg-white border rounded-xl p-4 ${colorClasses[color]}`}>
+    <div className={`bg-dark-800 border rounded-xl p-4 ${colorClasses[color]}`}>
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold mt-1 text-gray-900">{value}</p>
-          {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+          <p className="text-sm font-medium text-dark-400">{title}</p>
+          <p className={`text-2xl font-bold mt-1 ${valueColorClasses[color]}`}>{value}</p>
+          {subtitle && <p className="text-xs text-dark-500 mt-1">{subtitle}</p>}
         </div>
         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${iconColorClasses[color]}`}>
           {icon}
@@ -61,7 +69,7 @@ export function KPI({ stats }: KPIProps) {
 
   return (
     <div className="mb-6">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">Resumo Geral</h2>
+      <h2 className="text-lg font-semibold text-white mb-4">Resumo Geral</h2>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <KPICard
@@ -119,43 +127,43 @@ export function KPI({ stats }: KPIProps) {
 
       {/* Classificações */}
       <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-            <CheckCircle className="w-4 h-4 text-green-600" />
+        <div className="bg-dark-800 border border-dark-700 rounded-lg p-3 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+            <CheckCircle className="w-4 h-4 text-green-400" />
           </div>
           <div>
-            <p className="text-xs text-gray-500">Normal</p>
-            <p className="text-lg font-semibold text-gray-800">{stats.countNormal}</p>
+            <p className="text-xs text-dark-400">Normal</p>
+            <p className="text-lg font-semibold text-white">{stats.countNormal}</p>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-            <TrendingUp className="w-4 h-4 text-blue-600" />
+        <div className="bg-dark-800 border border-dark-700 rounded-lg p-3 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+            <TrendingUp className="w-4 h-4 text-blue-400" />
           </div>
           <div>
-            <p className="text-xs text-gray-500">Hora Extra</p>
-            <p className="text-lg font-semibold text-gray-800">{stats.countHoraExtra}</p>
+            <p className="text-xs text-dark-400">Hora Extra</p>
+            <p className="text-lg font-semibold text-white">{stats.countHoraExtra}</p>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-            <TrendingDown className="w-4 h-4 text-red-600" />
+        <div className="bg-dark-800 border border-dark-700 rounded-lg p-3 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+            <TrendingDown className="w-4 h-4 text-red-400" />
           </div>
           <div>
-            <p className="text-xs text-gray-500">Atraso</p>
-            <p className="text-lg font-semibold text-gray-800">{stats.countAtraso}</p>
+            <p className="text-xs text-dark-400">Atraso</p>
+            <p className="text-lg font-semibold text-white">{stats.countAtraso}</p>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-            <FileText className="w-4 h-4 text-gray-600" />
+        <div className="bg-dark-800 border border-dark-700 rounded-lg p-3 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-dark-600 flex items-center justify-center">
+            <FileText className="w-4 h-4 text-dark-300" />
           </div>
           <div>
-            <p className="text-xs text-gray-500">Outros</p>
-            <p className="text-lg font-semibold text-gray-800">{stats.countOutros}</p>
+            <p className="text-xs text-dark-400">Outros</p>
+            <p className="text-lg font-semibold text-white">{stats.countOutros}</p>
           </div>
         </div>
       </div>

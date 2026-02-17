@@ -122,7 +122,7 @@ export function PDFReport({ summaries, stats, fileName }: PDFReportProps) {
         </button>
         <button
           onClick={handlePrint}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 border border-dark-700 text-dark-200 rounded-lg hover:bg-dark-700 transition-colors"
         >
           <Printer className="w-4 h-4" />
           Imprimir

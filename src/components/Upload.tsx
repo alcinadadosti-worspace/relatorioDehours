@@ -103,7 +103,7 @@ export function Upload({
           relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200
           ${isDragging
             ? 'border-primary-500 bg-primary-50'
-            : 'border-gray-300 hover:border-primary-400 hover:bg-gray-50'
+            : 'border-dark-600 hover:border-primary-400 hover:bg-dark-700'
           }
           ${isLoading ? 'opacity-50 pointer-events-none' : ''}
         `}
@@ -120,23 +120,23 @@ export function Upload({
           <div
             className={`
               w-16 h-16 rounded-full flex items-center justify-center
-              ${isDragging ? 'bg-primary-100' : 'bg-gray-100'}
+              ${isDragging ? 'bg-primary-100' : 'bg-dark-700'}
             `}
           >
             {isLoading ? (
               <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
             ) : (
               <UploadIcon
-                className={`w-8 h-8 ${isDragging ? 'text-primary-500' : 'text-gray-400'}`}
+                className={`w-8 h-8 ${isDragging ? 'text-primary-500' : 'text-dark-500'}`}
               />
             )}
           </div>
 
           <div>
-            <p className="text-lg font-medium text-gray-700">
+            <p className="text-lg font-medium text-dark-200">
               {isLoading ? 'Processando arquivo...' : 'Arraste o arquivo Excel aqui'}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-dark-400 mt-1">
               ou clique para selecionar (.xlsx, .xls)
             </p>
           </div>
@@ -156,8 +156,8 @@ export function Upload({
 
       {/* Seleção de Abas */}
       {sheets.length > 0 && !error && (
-        <div className="mt-6 bg-white border border-gray-200 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <div className="mt-6 bg-dark-800 border border-dark-700 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <FileSpreadsheet className="w-5 h-5 text-primary-500" />
             Abas encontradas
           </h3>
@@ -168,9 +168,9 @@ export function Upload({
                 type="checkbox"
                 checked={selectAll}
                 onChange={handleSelectAll}
-                className="w-4 h-4 rounded border-gray-300 text-primary-500 focus:ring-primary-500"
+                className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500"
               />
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-dark-200">
                 Consolidar todas as abas válidas
               </span>
             </label>
@@ -183,7 +183,7 @@ export function Upload({
                 className={`
                   flex items-center justify-between p-3 rounded-lg border
                   ${sheet.hasRequiredColumns
-                    ? 'border-gray-200 bg-white'
+                    ? 'border-dark-700 bg-dark-800'
                     : 'border-red-200 bg-red-50'
                   }
                 `}
@@ -198,11 +198,11 @@ export function Upload({
                     }
                     onChange={() => handleSheetToggle(sheet.name)}
                     disabled={!sheet.hasRequiredColumns || selectAll}
-                    className="w-4 h-4 rounded border-gray-300 text-primary-500 focus:ring-primary-500 disabled:opacity-50"
+                    className="w-4 h-4 rounded border-dark-600 text-primary-500 focus:ring-primary-500 disabled:opacity-50"
                   />
                   <div>
-                    <p className="font-medium text-gray-800">{sheet.name}</p>
-                    <p className="text-xs text-gray-500">{sheet.rowCount} registros</p>
+                    <p className="font-medium text-white">{sheet.name}</p>
+                    <p className="text-xs text-dark-400">{sheet.rowCount} registros</p>
                   </div>
                 </div>
 
@@ -227,7 +227,7 @@ export function Upload({
               mt-6 w-full py-3 px-4 rounded-lg font-medium transition-colors
               ${hasSelectedSheets
                 ? 'bg-primary-500 text-white hover:bg-primary-600'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-dark-700 text-dark-500 cursor-not-allowed'
               }
             `}
           >

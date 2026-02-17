@@ -222,31 +222,31 @@ export default function App() {
   }, [loadDefaultFile]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-dark-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-dark-800 border-b border-dark-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                <Clock className="w-6 h-6 text-primary-600" />
+              <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
+                <Clock className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Relatório de Horas</h1>
-                <p className="text-xs text-gray-500">Análise de Ponto</p>
+                <h1 className="text-lg font-bold text-white">Relatório DataBank</h1>
+                <p className="text-xs text-dark-400">Análise de Ponto</p>
               </div>
             </div>
 
             {appState === 'ready' && (
               <div className="flex items-center gap-2">
                 {/* Tabs de navegação */}
-                <nav className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                <nav className="flex items-center gap-1 bg-dark-700 rounded-lg p-1">
                   <button
                     onClick={() => setViewMode('dashboard')}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                       viewMode === 'dashboard'
-                        ? 'bg-white text-primary-600 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'text-dark-300 hover:text-white'
                     }`}
                   >
                     <BarChart3 className="w-4 h-4" />
@@ -256,8 +256,8 @@ export default function App() {
                     onClick={() => setViewMode('report')}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                       viewMode === 'report'
-                        ? 'bg-white text-primary-600 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'text-dark-300 hover:text-white'
                     }`}
                   >
                     <FileText className="w-4 h-4" />
@@ -265,12 +265,12 @@ export default function App() {
                   </button>
                 </nav>
 
-                <div className="w-px h-8 bg-gray-300 mx-2" />
+                <div className="w-px h-8 bg-dark-600 mx-2" />
 
                 {isDefaultFile && (
                   <button
                     onClick={handleRefresh}
-                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-primary-400 hover:text-primary-300 hover:bg-dark-700 rounded-lg transition-colors"
                     title="Recarregar dados"
                   >
                     <RefreshCw className="w-4 h-4" />
@@ -280,7 +280,7 @@ export default function App() {
 
                 <button
                   onClick={handleReset}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm text-dark-300 hover:text-white hover:bg-dark-700 rounded-lg transition-colors"
                 >
                   <FileSpreadsheet className="w-4 h-4" />
                   {isDefaultFile ? 'Outro arquivo' : 'Novo arquivo'}
@@ -296,8 +296,8 @@ export default function App() {
         {/* Estado carregando arquivo padrão */}
         {appState === 'loading' && isDefaultFile && (
           <div className="py-12 flex flex-col items-center justify-center">
-            <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-600">Carregando dados...</p>
+            <div className="w-16 h-16 border-4 border-dark-700 border-t-primary-500 rounded-full animate-spin mb-4"></div>
+            <p className="text-dark-300">Carregando dados...</p>
           </div>
         )}
 
@@ -319,18 +319,18 @@ export default function App() {
           <>
             {/* Warnings */}
             {warnings.length > 0 && (
-              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-                <p className="font-medium text-yellow-800 mb-2">
+              <div className="mb-6 p-4 bg-yellow-900/30 border border-yellow-700/50 rounded-xl">
+                <p className="font-medium text-yellow-400 mb-2">
                   Avisos durante a importação ({warnings.length})
                 </p>
                 <div className="max-h-32 overflow-y-auto">
                   {warnings.slice(0, 10).map((w, i) => (
-                    <p key={i} className="text-sm text-yellow-700">
+                    <p key={i} className="text-sm text-yellow-300">
                       {w}
                     </p>
                   ))}
                   {warnings.length > 10 && (
-                    <p className="text-sm text-yellow-600 mt-2">
+                    <p className="text-sm text-yellow-500 mt-2">
                       ... e mais {warnings.length - 10} avisos
                     </p>
                   )}
@@ -350,12 +350,12 @@ export default function App() {
 
             {/* Gráficos */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <div className="bg-dark-800 border border-dark-700 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-gray-800">Ranking</h3>
+                  <h3 className="text-lg font-semibold text-white">Ranking</h3>
                   <button
                     onClick={() => setShowAllRanking(!showAllRanking)}
-                    className="text-sm text-primary-600 hover:text-primary-700"
+                    className="text-sm text-primary-400 hover:text-primary-300"
                   >
                     {showAllRanking ? 'Ver Top 10' : 'Ver todos'}
                   </button>
@@ -363,14 +363,14 @@ export default function App() {
                 <RankingChart summaries={filteredSummaries} showAll={showAllRanking} title="" />
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <div className="bg-dark-800 border border-dark-700 rounded-xl p-4">
                 {globalStats && <ClassificacaoChart stats={globalStats} />}
               </div>
             </div>
 
             {/* Tabela */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Colaboradores ({filteredSummaries.length})
               </h3>
               <SummaryTable
@@ -397,10 +397,10 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white mt-auto">
+      <footer className="border-t border-dark-700 bg-dark-800 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-sm text-gray-500 text-center">
-            Relatório de Horas - Análise de Ponto &copy; {new Date().getFullYear()}
+          <p className="text-sm text-dark-400 text-center">
+            Relatório DataBank &copy; {new Date().getFullYear()}
           </p>
         </div>
       </footer>

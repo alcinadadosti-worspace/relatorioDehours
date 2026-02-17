@@ -27,17 +27,24 @@ export function RankingChart({ summaries, showAll = false, title = 'Ranking por 
     const values = data.map((s) => Math.round(s.totalDeltaMinutes));
 
     return {
+      backgroundColor: 'transparent',
       title: {
         text: title,
         left: 'center',
         textStyle: {
           fontSize: 14,
           fontWeight: 600,
+          color: '#e2e8f0',
         },
       },
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' },
+        backgroundColor: 'rgba(30, 41, 59, 0.95)',
+        borderColor: '#334155',
+        textStyle: {
+          color: '#e2e8f0',
+        },
         formatter: (params: unknown[]) => {
           const p = params[0] as { name: string; value: number };
           const hours = Math.abs(p.value) / 60;
@@ -55,9 +62,20 @@ export function RankingChart({ summaries, showAll = false, title = 'Ranking por 
       xAxis: {
         type: 'value',
         axisLabel: {
+          color: '#94a3b8',
           formatter: (value: number) => {
             const hours = value / 60;
             return `${hours.toFixed(0)}h`;
+          },
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#334155',
+          },
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#334155',
           },
         },
       },
@@ -68,6 +86,17 @@ export function RankingChart({ summaries, showAll = false, title = 'Ranking por 
           width: 150,
           overflow: 'truncate',
           fontSize: 11,
+          color: '#94a3b8',
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#334155',
+          },
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#334155',
+          },
         },
       },
       series: [
@@ -88,6 +117,7 @@ export function RankingChart({ summaries, showAll = false, title = 'Ranking por 
               return `${hours.toFixed(1)}h`;
             },
             fontSize: 10,
+            color: '#e2e8f0',
           },
         },
       ],
@@ -113,23 +143,36 @@ export function ClassificacaoChart({ stats, title = 'Distribuição por Classifi
       .sort((a, b) => b.value - a.value);
 
     return {
+      backgroundColor: 'transparent',
       title: {
         text: title,
         left: 'center',
         textStyle: {
           fontSize: 14,
           fontWeight: 600,
+          color: '#e2e8f0',
         },
       },
       tooltip: {
         trigger: 'item',
         formatter: '{b}: {c} ({d}%)',
+        backgroundColor: 'rgba(30, 41, 59, 0.95)',
+        borderColor: '#334155',
+        textStyle: {
+          color: '#e2e8f0',
+        },
       },
       legend: {
         orient: 'vertical',
         right: '5%',
         top: 'middle',
         type: 'scroll',
+        textStyle: {
+          color: '#94a3b8',
+        },
+        pageTextStyle: {
+          color: '#94a3b8',
+        },
       },
       series: [
         {
@@ -139,7 +182,7 @@ export function ClassificacaoChart({ stats, title = 'Distribuição por Classifi
           avoidLabelOverlap: true,
           itemStyle: {
             borderRadius: 6,
-            borderColor: '#fff',
+            borderColor: '#1e293b',
             borderWidth: 2,
           },
           label: {
@@ -150,6 +193,7 @@ export function ClassificacaoChart({ stats, title = 'Distribuição por Classifi
               show: true,
               fontSize: 14,
               fontWeight: 'bold',
+              color: '#e2e8f0',
             },
           },
           data: data.map((d, i) => ({
@@ -201,17 +245,32 @@ export function TimelineChart({ records, title = 'Evolução por Data' }: Timeli
     });
 
     return {
+      backgroundColor: 'transparent',
       title: {
         text: title,
         left: 'center',
         textStyle: {
           fontSize: 14,
           fontWeight: 600,
+          color: '#e2e8f0',
         },
       },
       tooltip: {
         trigger: 'axis',
-        axisPointer: { type: 'cross' },
+        axisPointer: {
+          type: 'cross',
+          crossStyle: {
+            color: '#94a3b8',
+          },
+          lineStyle: {
+            color: '#94a3b8',
+          },
+        },
+        backgroundColor: 'rgba(30, 41, 59, 0.95)',
+        borderColor: '#334155',
+        textStyle: {
+          color: '#e2e8f0',
+        },
         formatter: (params: unknown[]) => {
           const p = params as { seriesName: string; name: string; value: number }[];
           let result = p[0].name + '<br/>';
@@ -226,6 +285,9 @@ export function TimelineChart({ records, title = 'Evolução por Data' }: Timeli
       legend: {
         data: ['Diferença do Dia', 'Acumulado'],
         top: '30px',
+        textStyle: {
+          color: '#94a3b8',
+        },
       },
       grid: {
         left: '3%',
@@ -240,12 +302,34 @@ export function TimelineChart({ records, title = 'Evolução por Data' }: Timeli
         axisLabel: {
           rotate: 45,
           fontSize: 10,
+          color: '#94a3b8',
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#334155',
+          },
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#334155',
+          },
         },
       },
       yAxis: {
         type: 'value',
         axisLabel: {
+          color: '#94a3b8',
           formatter: (value: number) => `${(value / 60).toFixed(0)}h`,
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#334155',
+          },
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#334155',
+          },
         },
       },
       series: [
@@ -306,9 +390,15 @@ export function CollaboratorClassificacaoChart({ summary }: CollaboratorClassifi
     ].filter((d) => d.value > 0);
 
     return {
+      backgroundColor: 'transparent',
       tooltip: {
         trigger: 'item',
         formatter: '{b}: {c} ({d}%)',
+        backgroundColor: 'rgba(30, 41, 59, 0.95)',
+        borderColor: '#334155',
+        textStyle: {
+          color: '#e2e8f0',
+        },
       },
       series: [
         {
@@ -317,13 +407,14 @@ export function CollaboratorClassificacaoChart({ summary }: CollaboratorClassifi
           center: ['50%', '50%'],
           itemStyle: {
             borderRadius: 6,
-            borderColor: '#fff',
+            borderColor: '#1e293b',
             borderWidth: 2,
           },
           label: {
             show: true,
             formatter: '{b}: {c}',
             fontSize: 11,
+            color: '#e2e8f0',
           },
           data: data.map((d) => ({
             ...d,

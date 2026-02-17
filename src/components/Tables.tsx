@@ -84,7 +84,7 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
-      return <ChevronUp className="w-4 h-4 text-gray-300" />;
+      return <ChevronUp className="w-4 h-4 text-dark-500" />;
     }
     return sortDirection === 'asc' ? (
       <ChevronUp className="w-4 h-4 text-primary-500" />
@@ -94,13 +94,13 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+    <div className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-dark-700 border-b border-dark-700">
             <tr>
               <th
-                className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-left text-xs font-semibold text-dark-300 uppercase tracking-wider cursor-pointer hover:bg-dark-600"
                 onClick={() => handleSort('id')}
               >
                 <div className="flex items-center gap-1">
@@ -109,7 +109,7 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-left text-xs font-semibold text-dark-300 uppercase tracking-wider cursor-pointer hover:bg-dark-600"
                 onClick={() => handleSort('colaborador')}
               >
                 <div className="flex items-center gap-1">
@@ -118,7 +118,7 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-right text-xs font-semibold text-dark-300 uppercase tracking-wider cursor-pointer hover:bg-dark-600"
                 onClick={() => handleSort('totalDeltaMinutes')}
               >
                 <div className="flex items-center justify-end gap-1">
@@ -127,7 +127,7 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-center text-xs font-semibold text-dark-300 uppercase tracking-wider cursor-pointer hover:bg-dark-600"
                 onClick={() => handleSort('countDias')}
               >
                 <div className="flex items-center justify-center gap-1">
@@ -136,7 +136,7 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                className="px-4 py-3 text-center text-xs font-semibold text-dark-300 uppercase tracking-wider cursor-pointer hover:bg-dark-600"
                 onClick={() => handleSort('countSemDados')}
               >
                 <div className="flex items-center justify-center gap-1">
@@ -144,23 +144,23 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
                   <SortIcon field="countSemDados" />
                 </div>
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-xs font-semibold text-dark-300 uppercase tracking-wider">
                 Ações
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-dark-700">
             {paginatedSummaries.map((summary) => (
                 <tr
                   key={summary.id}
-                  className="hover:bg-gray-50 transition-colors"
+                  className="hover:bg-dark-700 transition-colors"
                 >
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                  <td className="px-4 py-3 text-sm font-medium text-white">
                     {summary.id}
                   </td>
                   <td className="px-4 py-3">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-white">
                         {summary.colaborador}
                       </p>
                       {summary.alternativeNames.length > 0 && (
@@ -182,20 +182,20 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
                       {formatMinutesToHoursMinutes(summary.totalDeltaMinutes)}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-center text-gray-600">
+                  <td className="px-4 py-3 text-sm text-center text-dark-300">
                     {summary.countDias}
                   </td>
                   <td className="px-4 py-3 text-sm text-center">
                     {summary.countSemDados > 0 ? (
                       <span className="text-yellow-600">{summary.countSemDados}</span>
                     ) : (
-                      <span className="text-gray-400">0</span>
+                      <span className="text-dark-500">0</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-center">
                     <button
                       onClick={() => onSelectCollaborator(summary.id)}
-                      className="p-1.5 rounded-lg text-gray-500 hover:text-primary-600 hover:bg-primary-50 transition-colors"
+                      className="p-1.5 rounded-lg text-dark-400 hover:text-primary-400 hover:bg-dark-700 transition-colors"
                       title="Ver detalhes"
                     >
                       <Eye className="w-4 h-4" />
@@ -209,8 +209,8 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
 
       {/* Paginação */}
       {totalPages > 1 && (
-        <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between bg-gray-50">
-          <p className="text-sm text-gray-600">
+        <div className="px-4 py-3 border-t border-dark-700 flex items-center justify-between bg-dark-700">
+          <p className="text-sm text-dark-300">
             Mostrando {(currentPage - 1) * itemsPerPage + 1} a{' '}
             {Math.min(currentPage * itemsPerPage, sortedSummaries.length)} de{' '}
             {sortedSummaries.length}
@@ -220,19 +220,19 @@ export function SummaryTable({ summaries, onSelectCollaborator }: SummaryTablePr
             <button
               onClick={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage === 1}
-              className="p-1.5 rounded-lg border border-gray-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-1.5 rounded-lg border border-dark-600 hover:bg-dark-600 disabled:opacity-50 disabled:cursor-not-allowed text-white"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-dark-300">
               Página {currentPage} de {totalPages}
             </span>
 
             <button
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="p-1.5 rounded-lg border border-gray-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-1.5 rounded-lg border border-dark-600 hover:bg-dark-600 disabled:opacity-50 disabled:cursor-not-allowed text-white"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -266,49 +266,49 @@ export function RecordsTable({ records }: RecordsTableProps) {
   const totalPages = Math.ceil(sortedRecords.length / itemsPerPage);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+    <div className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="bg-dark-700 border-b border-dark-700">
             <tr>
-              <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-left text-xs font-semibold text-dark-300 uppercase tracking-wider">
                 Data
               </th>
-              <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-left text-xs font-semibold text-dark-300 uppercase tracking-wider">
                 Dia
               </th>
-              <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-left text-xs font-semibold text-dark-300 uppercase tracking-wider">
                 Classificação
               </th>
-              <th className="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-semibold text-dark-300 uppercase tracking-wider">
                 Entrada
               </th>
-              <th className="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-semibold text-dark-300 uppercase tracking-wider">
                 Intervalo
               </th>
-              <th className="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-semibold text-dark-300 uppercase tracking-wider">
                 Retorno
               </th>
-              <th className="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-semibold text-dark-300 uppercase tracking-wider">
                 Saída
               </th>
-              <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-right text-xs font-semibold text-dark-300 uppercase tracking-wider">
                 Diferença
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-dark-700">
             {paginatedRecords.map((record, idx) => (
               <tr
                 key={`${record.sourceSheet}-${record.rowIndex}-${idx}`}
-                className={`hover:bg-gray-50 ${record.parseError ? 'bg-red-50' : ''} ${
-                  record.isMissing ? 'bg-yellow-50' : ''
-                } ${record.isAjuste ? 'bg-orange-50' : ''}`}
+                className={`hover:bg-dark-700 ${record.parseError ? 'bg-red-900/30' : ''} ${
+                  record.isMissing ? 'bg-yellow-900/30' : ''
+                } ${record.isAjuste ? 'bg-orange-900/30' : ''}`}
               >
-                <td className="px-3 py-2.5 text-sm text-gray-900">
+                <td className="px-3 py-2.5 text-sm text-white">
                   {record.data ? formatDate(record.data) : record.dataString || '-'}
                 </td>
-                <td className="px-3 py-2.5 text-sm text-gray-600">{record.dia || '-'}</td>
+                <td className="px-3 py-2.5 text-sm text-dark-300">{record.dia || '-'}</td>
                 <td className="px-3 py-2.5">
                   <span
                     className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${getClassificacaoBadge(
@@ -318,16 +318,16 @@ export function RecordsTable({ records }: RecordsTableProps) {
                     {record.classificacao || 'N/A'}
                   </span>
                 </td>
-                <td className="px-3 py-2.5 text-sm text-center text-gray-600">
+                <td className="px-3 py-2.5 text-sm text-center text-dark-300">
                   {record.entrada || '-'}
                 </td>
-                <td className="px-3 py-2.5 text-sm text-center text-gray-600">
+                <td className="px-3 py-2.5 text-sm text-center text-dark-300">
                   {record.intervalo || '-'}
                 </td>
-                <td className="px-3 py-2.5 text-sm text-center text-gray-600">
+                <td className="px-3 py-2.5 text-sm text-center text-dark-300">
                   {record.retorno || '-'}
                 </td>
-                <td className="px-3 py-2.5 text-sm text-center text-gray-600">
+                <td className="px-3 py-2.5 text-sm text-center text-dark-300">
                   {record.saida || '-'}
                 </td>
                 <td className="px-3 py-2.5 text-sm text-right font-mono">
@@ -357,8 +357,8 @@ export function RecordsTable({ records }: RecordsTableProps) {
 
       {/* Paginação */}
       {totalPages > 1 && (
-        <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between bg-gray-50">
-          <p className="text-sm text-gray-600">
+        <div className="px-4 py-3 border-t border-dark-700 flex items-center justify-between bg-dark-700">
+          <p className="text-sm text-dark-300">
             Mostrando {(currentPage - 1) * itemsPerPage + 1} a{' '}
             {Math.min(currentPage * itemsPerPage, sortedRecords.length)} de {sortedRecords.length}
           </p>
@@ -367,19 +367,19 @@ export function RecordsTable({ records }: RecordsTableProps) {
             <button
               onClick={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage === 1}
-              className="p-1.5 rounded-lg border border-gray-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-1.5 rounded-lg border border-dark-600 hover:bg-dark-600 disabled:opacity-50 disabled:cursor-not-allowed text-white"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-dark-300">
               Página {currentPage} de {totalPages}
             </span>
 
             <button
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="p-1.5 rounded-lg border border-gray-300 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-1.5 rounded-lg border border-dark-600 hover:bg-dark-600 disabled:opacity-50 disabled:cursor-not-allowed text-white"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -402,5 +402,5 @@ function getClassificacaoBadge(classificacao: string): string {
   if (normalized === 'atraso') {
     return 'bg-red-100 text-red-800';
   }
-  return 'bg-gray-100 text-gray-800';
+  return 'bg-dark-700 text-white';
 }
