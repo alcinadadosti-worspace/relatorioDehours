@@ -271,26 +271,29 @@ export function RecordsTable({ records }: RecordsTableProps) {
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Data
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Dia
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Classificação
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Entrada
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Intervalo
+              </th>
+              <th className="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                Retorno
+              </th>
+              <th className="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Saída
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Diferença
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Aba
               </th>
             </tr>
           </thead>
@@ -302,11 +305,11 @@ export function RecordsTable({ records }: RecordsTableProps) {
                   record.isMissing ? 'bg-yellow-50' : ''
                 }`}
               >
-                <td className="px-4 py-2.5 text-sm text-gray-900">
+                <td className="px-3 py-2.5 text-sm text-gray-900">
                   {record.data ? formatDate(record.data) : record.dataString || '-'}
                 </td>
-                <td className="px-4 py-2.5 text-sm text-gray-600">{record.dia || '-'}</td>
-                <td className="px-4 py-2.5">
+                <td className="px-3 py-2.5 text-sm text-gray-600">{record.dia || '-'}</td>
+                <td className="px-3 py-2.5">
                   <span
                     className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${getClassificacaoBadge(
                       record.classificacao
@@ -315,13 +318,19 @@ export function RecordsTable({ records }: RecordsTableProps) {
                     {record.classificacao || 'N/A'}
                   </span>
                 </td>
-                <td className="px-4 py-2.5 text-sm text-center text-gray-600">
+                <td className="px-3 py-2.5 text-sm text-center text-gray-600">
                   {record.entrada || '-'}
                 </td>
-                <td className="px-4 py-2.5 text-sm text-center text-gray-600">
+                <td className="px-3 py-2.5 text-sm text-center text-gray-600">
+                  {record.intervalo || '-'}
+                </td>
+                <td className="px-3 py-2.5 text-sm text-center text-gray-600">
+                  {record.retorno || '-'}
+                </td>
+                <td className="px-3 py-2.5 text-sm text-center text-gray-600">
                   {record.saida || '-'}
                 </td>
-                <td className="px-4 py-2.5 text-sm text-right font-mono">
+                <td className="px-3 py-2.5 text-sm text-right font-mono">
                   {record.isMissing ? (
                     <span className="text-yellow-600">Sem dados</span>
                   ) : record.parseError ? (
@@ -336,7 +345,6 @@ export function RecordsTable({ records }: RecordsTableProps) {
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-2.5 text-xs text-gray-500">{record.sourceSheet}</td>
               </tr>
             ))}
           </tbody>
