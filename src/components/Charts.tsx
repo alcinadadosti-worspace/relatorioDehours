@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import type { CollaboratorSummary, GlobalStats, ParsedRecord } from '../lib/types';
 import { formatDate } from '../lib/time';
@@ -325,7 +325,7 @@ export function CollaboratorClassificacaoChart({ summary }: CollaboratorClassifi
             formatter: '{b}: {c}',
             fontSize: 11,
           },
-          data: data.map((d, i) => ({
+          data: data.map((d) => ({
             ...d,
             itemStyle: {
               color: getPieColor(d.name),

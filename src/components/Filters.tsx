@@ -1,4 +1,3 @@
-import React from 'react';
 import { Search, Filter, Settings2 } from 'lucide-react';
 import type { FilterState, AggregationConfig, GlobalStats } from '../lib/types';
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowLeft, User, Clock, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
 import type { CollaboratorSummary } from '../lib/types';
 import { formatMinutesToHoursMinutes } from '../lib/types';

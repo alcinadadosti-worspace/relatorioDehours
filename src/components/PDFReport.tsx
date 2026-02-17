@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { FileDown, Printer } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
 import type { CollaboratorSummary, GlobalStats, AggregationConfig } from '../lib/types';

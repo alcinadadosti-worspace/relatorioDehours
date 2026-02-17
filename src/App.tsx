@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Clock, FileSpreadsheet, BarChart3, FileText } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
@@ -8,8 +8,6 @@ import type {
   AggregationConfig,
   SheetInfo,
   ParsedRecord,
-  CollaboratorSummary,
-  GlobalStats,
 } from './lib/types';
 import { readExcelFile, importSheets } from './lib/excel';
 import {
