@@ -345,6 +345,31 @@ export function filterById(
 }
 
 /**
+ * Filtra registros por intervalo de datas
+ */
+export function filterRecordsByDate(
+  records: ParsedRecord[],
+  dataInicio: string | null,
+  dataFim: string | null
+): ParsedRecord[] {
+  if (!dataInicio && !dataFim) {
+    return records;
+  }
+
+  const inicio = dataInicio ? new Date(dataInicio + 'T00:00:00') : null;
+  const fim = dataFim ? new Date(dataFim + 'T23:59:59') : null;
+
+  return records.filter((r) => {
+    if (!r.data) return true; // Mantém registros sem data
+
+    if (inicio && r.data < inicio) return false;
+    if (fim && r.data > fim) return false;
+
+    return true;
+  });
+}
+
+/**
  * Aplica todos os filtros
  */
 export function applyFilters(
@@ -353,6 +378,8 @@ export function applyFilters(
     searchName?: string;
     searchId?: string;
     classificacao?: string;
+    dataInicio?: string | null;
+    dataFim?: string | null;
   }
 ): CollaboratorSummary[] {
   let result = summaries;
@@ -374,6 +401,45 @@ export function applyFilters(
         return normalized === filterNormalized;
       })
     );
+  }
+
+  // Filtra por data - filtra os registros de cada colaborador
+  if (filters.dataInicio || filters.dataFim) {
+    result = result.map((s) => {
+      const filteredRecords = filterRecordsByDate(s.records, filters.dataInicio || null, filters.dataFim || null);
+
+      // Recalcula totais com registros filtrados
+      let totalDeltaMinutes = 0;
+      let countDias = 0;
+      let countSemDados = 0;
+      let countAjuste = 0;
+
+      for (const record of filteredRecords) {
+        if (record.isAjuste) {
+          countAjuste++;
+          continue;
+        }
+        if (Math.abs(record.deltaMinutes) <= 10) {
+          continue;
+        }
+        totalDeltaMinutes += record.deltaMinutes;
+        if (record.isMissing) {
+          countSemDados++;
+        } else {
+          countDias++;
+        }
+      }
+
+      return {
+        ...s,
+        records: filteredRecords,
+        totalDeltaMinutes,
+        adjustedTotalMinutes: totalDeltaMinutes,
+        countDias,
+        countSemDados,
+        countAjuste,
+      };
+    }).filter((s) => s.records.length > 0); // Remove colaboradores sem registros no período
   }
 
   return result;

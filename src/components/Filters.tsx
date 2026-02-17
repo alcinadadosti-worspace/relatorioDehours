@@ -1,4 +1,4 @@
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Calendar } from 'lucide-react';
 import type { FilterState, GlobalStats } from '../lib/types';
 
 interface FiltersProps {
@@ -13,6 +13,13 @@ export function Filters({
   onFilterChange,
 }: FiltersProps) {
   const classificacoes = stats ? Object.keys(stats.byClassificacao) : [];
+
+  const hasActiveFilters =
+    filters.searchName ||
+    filters.searchId ||
+    filters.classificacao !== 'todas' ||
+    filters.dataInicio ||
+    filters.dataFim;
 
   return (
     <div className="bg-dark-800 border border-dark-700 rounded-xl p-4 mb-6">
@@ -69,8 +76,49 @@ export function Filters({
         </div>
       </div>
 
-      {/* Limpar filtros */}
-      {(filters.searchName || filters.searchId || filters.classificacao !== 'todas') && (
+      {/* Filtro por Data */}
+      <div className="flex flex-wrap gap-4 items-end mt-4 pt-4 border-t border-dark-700">
+        <div className="flex items-center gap-2 text-dark-300">
+          <Calendar className="w-4 h-4" />
+          <span className="text-sm font-medium">Período:</span>
+        </div>
+
+        <div className="w-40">
+          <label className="block text-xs font-medium text-dark-400 mb-1">
+            Data Início
+          </label>
+          <input
+            type="date"
+            value={filters.dataInicio || ''}
+            onChange={(e) => onFilterChange({ dataInicio: e.target.value || null })}
+            className="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-dark-700 text-white text-sm"
+          />
+        </div>
+
+        <div className="w-40">
+          <label className="block text-xs font-medium text-dark-400 mb-1">
+            Data Fim
+          </label>
+          <input
+            type="date"
+            value={filters.dataFim || ''}
+            onChange={(e) => onFilterChange({ dataFim: e.target.value || null })}
+            className="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-dark-700 text-white text-sm"
+          />
+        </div>
+
+        {(filters.dataInicio || filters.dataFim) && (
+          <button
+            onClick={() => onFilterChange({ dataInicio: null, dataFim: null })}
+            className="text-sm text-primary-400 hover:text-primary-300 font-medium"
+          >
+            Limpar datas
+          </button>
+        )}
+      </div>
+
+      {/* Limpar todos os filtros */}
+      {hasActiveFilters && (
         <div className="mt-3 pt-3 border-t border-dark-700">
           <button
             onClick={() =>
@@ -79,11 +127,13 @@ export function Filters({
                 searchId: '',
                 classificacao: 'todas',
                 selectedCollaboratorId: null,
+                dataInicio: null,
+                dataFim: null,
               })
             }
-            className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+            className="text-sm text-primary-400 hover:text-primary-300 font-medium"
           >
-            Limpar filtros
+            Limpar todos os filtros
           </button>
         </div>
       )}

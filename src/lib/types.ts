@@ -123,6 +123,8 @@ export interface FilterState {
   searchId: string;
   classificacao: string;
   selectedCollaboratorId: string | null;
+  dataInicio: string | null;  // formato YYYY-MM-DD
+  dataFim: string | null;     // formato YYYY-MM-DD
 }
 
 export interface AppData {

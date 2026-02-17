@@ -52,6 +52,8 @@ export default function App() {
     searchId: '',
     classificacao: 'todas',
     selectedCollaboratorId: null,
+    dataInicio: null,
+    dataFim: null,
   });
 
   // View
@@ -206,6 +208,8 @@ export default function App() {
       searchId: '',
       classificacao: 'todas',
       selectedCollaboratorId: null,
+      dataInicio: null,
+      dataFim: null,
     });
     setViewMode('dashboard');
     setIsDefaultFile(false);
@@ -217,6 +221,8 @@ export default function App() {
       searchId: '',
       classificacao: 'todas',
       selectedCollaboratorId: null,
+      dataInicio: null,
+      dataFim: null,
     });
     loadDefaultFile();
   }, [loadDefaultFile]);
