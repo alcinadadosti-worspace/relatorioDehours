@@ -127,13 +127,18 @@ export function aggregateByCollaborator(
     let totalAtrasoPenaltyMinutes = 0;
 
     for (const record of groupRecords) {
-      // Se é ajuste (entrada após 10h), não contabiliza no total
+      // Se é ajuste (entrada após 10h ou intervalo/retorno após 17h), não contabiliza no total
       if (record.isAjuste) {
         countAjuste++;
         continue; // Pula para o próximo registro sem somar
       }
 
-      // Soma diferença bruta (apenas se não for ajuste)
+      // Se a diferença for 10 minutos ou menos (em valor absoluto), não contabiliza
+      if (Math.abs(record.deltaMinutes) <= 10) {
+        continue; // Pula diferenças pequenas
+      }
+
+      // Soma diferença bruta (apenas se não for ajuste e > 10 min)
       totalDeltaMinutes += record.deltaMinutes;
 
       // Contadores
@@ -224,6 +229,11 @@ export function calculateGlobalStats(
     if (record.isAjuste) {
       totalAjuste++;
       continue; // Não soma no bruto
+    }
+
+    // Se a diferença for 10 minutos ou menos (em valor absoluto), não contabiliza
+    if (Math.abs(record.deltaMinutes) <= 10) {
+      continue; // Pula diferenças pequenas
     }
 
     totalBrutoMinutes += record.deltaMinutes;
