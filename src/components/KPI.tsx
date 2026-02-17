@@ -1,7 +1,6 @@
 import {
   Users,
   FileText,
-  Clock,
   TrendingUp,
   TrendingDown,
   AlertTriangle,
