@@ -17,8 +17,8 @@ export const AUTH_MAP: Record<string, string[]> = {
   ],
   '1212': ['Michaell Jean Nunes De Carvalho'],
   '1515': ['Suzana Martins Tavares'],
-  '3232': ['Rafaela Alves Mendes'],      // mês de aniversário pendente
-  // TODO: adicionar Carlos Eduardo Silva De Oliveira quando tiver o código
+  '3232': ['Rafaela Alves Mendes'],
+  '7777': ['Carlos Eduardo Silva De Oliveira'],
 };
 
 // Mapa de nome do gestor → número do mês de aniversário (1–12)
@@ -35,8 +35,8 @@ export const BIRTH_MONTH: Record<string, number> = {
   'Maria Taciane Pereira Barbosa':        5,  // maio
   'Michaell Jean Nunes De Carvalho':      2,  // fevereiro
   'Suzana Martins Tavares':               4,  // abril
-  // Rafaela Alves Mendes: pendente
-  // Carlos Eduardo Silva De Oliveira: pendente (sem código ainda)
+  'Rafaela Alves Mendes':                 5,  // maio
+  'Carlos Eduardo Silva De Oliveira':     1,  // janeiro
 };
 
 export const MONTH_NAMES = [
