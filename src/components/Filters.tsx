@@ -4,11 +4,12 @@ import type { FilterState, GestorSummary } from '../lib/types';
 interface FiltersProps {
   filters: FilterState;
   gestores: GestorSummary[];
+  isMaster: boolean;
   onFilterChange: (f: Partial<FilterState>) => void;
 }
 
-export function Filters({ filters, gestores, onFilterChange }: FiltersProps) {
-  const hasFilters = filters.searchNome || filters.searchGestor;
+export function Filters({ filters, gestores, isMaster, onFilterChange }: FiltersProps) {
+  const hasFilters = filters.searchNome || (isMaster && filters.searchGestor);
 
   return (
     <div className="bg-dark-800 border border-dark-700 rounded-xl p-4 mb-6 flex flex-wrap gap-3 items-center">
@@ -24,19 +25,21 @@ export function Filters({ filters, gestores, onFilterChange }: FiltersProps) {
         />
       </div>
 
-      {/* Filtro por gestor */}
-      <select
-        value={filters.searchGestor}
-        onChange={(e) => onFilterChange({ searchGestor: e.target.value })}
-        className="flex-1 min-w-48 px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-sm text-white focus:outline-none focus:border-primary-500"
-      >
-        <option value="">Todos os gestores</option>
-        {gestores.map((g) => (
-          <option key={g.gestor} value={g.gestor}>
-            {g.gestor} ({g.colaboradores.length})
-          </option>
-        ))}
-      </select>
+      {/* Filtro por gestor — apenas para master */}
+      {isMaster && (
+        <select
+          value={filters.searchGestor}
+          onChange={(e) => onFilterChange({ searchGestor: e.target.value })}
+          className="flex-1 min-w-48 px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-sm text-white focus:outline-none focus:border-primary-500"
+        >
+          <option value="">Todos os gestores</option>
+          {gestores.map((g) => (
+            <option key={g.gestor} value={g.gestor}>
+              {g.gestor} ({g.colaboradores.length})
+            </option>
+          ))}
+        </select>
+      )}
 
       {/* Limpar filtros */}
       {hasFilters && (

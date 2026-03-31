@@ -1,19 +1,22 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { BarChart3, RefreshCw } from 'lucide-react';
+import { BarChart3, RefreshCw, LogOut } from 'lucide-react';
 
 import type { AppState, ColaboradorRecord, FilterState } from './lib/types';
+import type { AuthSession } from './lib/auth';
+import { gestorMatches } from './lib/auth';
 import { readExcelFile, parseWorkbookBuffer } from './lib/excel';
 import { groupByGestor, calculateGlobalStats, applyFilters } from './lib/aggregation';
 
-import { Upload, Filters, KPI, GestorChart, RankingChart, ColaboradoresTable } from './components';
+import { Login, Upload, Filters, KPI, GestorChart, RankingChart, ColaboradoresTable } from './components';
 
 const DEFAULT_FILE = '/saldo_por_gestor.xlsx';
 
 export default function App() {
+  const [auth, setAuth] = useState<AuthSession | null>(null);
   const [appState, setAppState] = useState<AppState>('loading');
   const [error, setError] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [records, setRecords] = useState<ColaboradorRecord[]>([]);
+  const [, setFileName] = useState<string | null>(null);
+  const [allRecords, setAllRecords] = useState<ColaboradorRecord[]>([]);
   const [filters, setFilters] = useState<FilterState>({ searchNome: '', searchGestor: '' });
 
   const loadDefaultFile = useCallback(async () => {
@@ -24,7 +27,7 @@ export default function App() {
       if (!res.ok) throw new Error('not found');
       const buf = new Uint8Array(await res.arrayBuffer());
       const data = parseWorkbookBuffer(buf);
-      setRecords(data);
+      setAllRecords(data);
       setFileName('saldo_por_gestor.xlsx');
       setAppState('ready');
     } catch {
@@ -40,7 +43,7 @@ export default function App() {
     setFileName(file.name);
     try {
       const data = await readExcelFile(file);
-      setRecords(data);
+      setAllRecords(data);
       setFilters({ searchNome: '', searchGestor: '' });
       setAppState('ready');
     } catch (err) {
@@ -53,23 +56,46 @@ export default function App() {
     setFilters((prev) => ({ ...prev, ...f }));
   }, []);
 
-  // Todos os gestores (sem filtro de nome, para popular o dropdown)
-  const allGestores = useMemo(() => groupByGestor(records), [records]);
+  const handleLogin = useCallback((session: AuthSession) => {
+    setAuth(session);
+    setFilters({ searchNome: '', searchGestor: '' });
+  }, []);
 
-  // Registros filtrados
-  const filteredRecords = useMemo(() => applyFilters(records, filters), [records, filters]);
+  const handleLogout = useCallback(() => {
+    setAuth(null);
+    setFilters({ searchNome: '', searchGestor: '' });
+  }, []);
 
-  // Stats globais (sobre todos os registros)
-  const globalStats = useMemo(
-    () => (records.length > 0 ? calculateGlobalStats(records) : null),
-    [records]
+  // Registros filtrados pela sessão do gestor (se não for master)
+  const sessionRecords = useMemo(() => {
+    if (!auth) return [];
+    if (auth.isMaster) return allRecords;
+    return allRecords.filter((r) => gestorMatches(r.gestor, auth.gestorName));
+  }, [allRecords, auth]);
+
+  // Gestores disponíveis para o dropdown (apenas master vê todos)
+  const allGestores = useMemo(() => groupByGestor(sessionRecords), [sessionRecords]);
+
+  // Registros após filtros adicionais (nome/gestor)
+  const filteredRecords = useMemo(
+    () => applyFilters(sessionRecords, filters),
+    [sessionRecords, filters]
   );
 
-  // Gestores filtrados (para gráfico)
-  const filteredGestores = useMemo(() => {
-    if (!filters.searchGestor) return groupByGestor(filteredRecords);
-    return groupByGestor(filteredRecords);
-  }, [filteredRecords, filters.searchGestor]);
+  const globalStats = useMemo(
+    () => (sessionRecords.length > 0 ? calculateGlobalStats(sessionRecords) : null),
+    [sessionRecords]
+  );
+
+  const filteredGestores = useMemo(
+    () => groupByGestor(filteredRecords),
+    [filteredRecords]
+  );
+
+  // Tela de login (antes de autenticar)
+  if (!auth) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   return (
     <div className="min-h-screen bg-dark-900 flex flex-col">
@@ -84,27 +110,35 @@ export default function App() {
               <div>
                 <h1 className="text-lg font-bold text-white">Saldo de Horas</h1>
                 <p className="text-xs text-dark-400">
-                  {fileName ? fileName : 'Análise por Gestor'}
+                  {auth.isMaster ? 'Visão geral' : auth.gestorName}
                 </p>
               </div>
             </div>
 
-            {appState === 'ready' && (
+            <div className="flex items-center gap-2">
+              {appState === 'ready' && (
+                <button
+                  onClick={loadDefaultFile}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm text-primary-400 hover:text-primary-300 hover:bg-dark-700 rounded-lg transition-colors"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Atualizar
+                </button>
+              )}
               <button
-                onClick={loadDefaultFile}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm text-primary-400 hover:text-primary-300 hover:bg-dark-700 rounded-lg transition-colors"
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm text-dark-300 hover:text-white hover:bg-dark-700 rounded-lg transition-colors"
               >
-                <RefreshCw className="w-4 h-4" />
-                Atualizar
+                <LogOut className="w-4 h-4" />
+                Sair
               </button>
-            )}
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
-        {/* Carregando */}
         {appState === 'loading' && (
           <div className="flex flex-col items-center justify-center py-24">
             <div className="w-12 h-12 border-4 border-dark-700 border-t-primary-500 rounded-full animate-spin mb-4" />
@@ -112,18 +146,12 @@ export default function App() {
           </div>
         )}
 
-        {/* Upload */}
         {(appState === 'empty' || appState === 'error') && (
           <div className="py-16">
-            <Upload
-              onFileSelect={handleFileSelect}
-              isLoading={false}
-              error={error}
-            />
+            <Upload onFileSelect={handleFileSelect} isLoading={false} error={error} />
           </div>
         )}
 
-        {/* Dashboard */}
         {appState === 'ready' && globalStats && (
           <>
             <KPI stats={globalStats} />
@@ -131,16 +159,16 @@ export default function App() {
             <Filters
               filters={filters}
               gestores={allGestores}
+              isMaster={auth.isMaster}
               onFilterChange={handleFilterChange}
             />
 
-            {/* Gráficos */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
               <div className="bg-dark-800 border border-dark-700 rounded-xl p-5">
                 <h3 className="text-base font-semibold text-white mb-4">
                   Saldo por Equipe
                   <span className="ml-2 text-sm font-normal text-dark-400">
-                    ({filteredGestores.length} gestores)
+                    ({filteredGestores.length} {filteredGestores.length === 1 ? 'gestor' : 'gestores'})
                   </span>
                 </h3>
                 <GestorChart gestores={filteredGestores} />
@@ -157,7 +185,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Tabela */}
             <div>
               <h3 className="text-base font-semibold text-white mb-3">
                 Todos os Colaboradores
