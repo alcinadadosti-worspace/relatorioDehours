@@ -111,7 +111,7 @@ export function RankingChart({ records }: RankingChartProps) {
         textStyle: { color: '#e2e8f0' },
         formatter: (params: { name: string; dataIndex: number }[]) => {
           const p = params[0];
-          const r = sorted[p.dataIndex];
+          const r = [...sorted].reverse()[p.dataIndex];
           return `
             <div style="font-weight:600;margin-bottom:4px">${r.nome}</div>
             <div>Gestor: ${r.gestor}</div>
