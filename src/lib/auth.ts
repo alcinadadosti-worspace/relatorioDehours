@@ -9,7 +9,7 @@ export const AUTH_MAP: Record<string, string[]> = {
     'Leidiane Souza',
     'Erick Café Santos Júnior',
     'Romulo Jose Santos Lisboa',
-    'Joao Antonio Tavarares Santos',
+    'Joao Antonio Tavares Santos',       // corrigido: Tavarares → Tavares
     'Ana Clara de Matos Chagas',
     'Jonathan Henrique da Conceição Silva',
     'Kemilly Rafaelly Souza Silva',
@@ -17,8 +17,33 @@ export const AUTH_MAP: Record<string, string[]> = {
   ],
   '1212': ['Michaell Jean Nunes De Carvalho'],
   '1515': ['Suzana Martins Tavares'],
-  '3232': ['Rafaela Alves Mendes'],
+  '3232': ['Rafaela Alves Mendes'],      // mês de aniversário pendente
+  // TODO: adicionar Carlos Eduardo Silva De Oliveira quando tiver o código
 };
+
+// Mapa de nome do gestor → número do mês de aniversário (1–12)
+// Gestores sem mês cadastrado pulam a etapa 3
+export const BIRTH_MONTH: Record<string, number> = {
+  'Alberto Luiz Marinho Batista':         2,  // fevereiro
+  'Leidiane Souza':                       5,  // maio
+  'Erick Café Santos Júnior':             5,  // maio
+  'Romulo Jose Santos Lisboa':            7,  // julho
+  'Joao Antonio Tavares Santos':          7,  // julho
+  'Ana Clara de Matos Chagas':           12,  // dezembro
+  'Jonathan Henrique da Conceição Silva': 8,  // agosto
+  'Kemilly Rafaelly Souza Silva':         5,  // maio
+  'Maria Taciane Pereira Barbosa':        5,  // maio
+  'Michaell Jean Nunes De Carvalho':      2,  // fevereiro
+  'Suzana Martins Tavares':               4,  // abril
+  // Rafaela Alves Mendes: pendente
+  // Carlos Eduardo Silva De Oliveira: pendente (sem código ainda)
+};
+
+export const MONTH_NAMES = [
+  '', // índice 0 não usado
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+];
 
 export type AuthSession =
   | { isMaster: true; gestorName: null }
@@ -28,6 +53,16 @@ export function validateCode(code: string): 'master' | string[] | null {
   if (code.trim() === MASTER_CODE) return 'master';
   const names = AUTH_MAP[code.trim()];
   return names ?? null;
+}
+
+export function validateBirthMonth(gestorName: string, monthNumber: number): boolean {
+  const expected = BIRTH_MONTH[gestorName];
+  if (expected === undefined) return true; // sem mês cadastrado → passa direto
+  return expected === monthNumber;
+}
+
+export function requiresBirthMonth(gestorName: string): boolean {
+  return BIRTH_MONTH[gestorName] !== undefined;
 }
 
 // Normaliza string para comparação (sem acento, lowercase)
