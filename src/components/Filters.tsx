@@ -1,141 +1,52 @@
-import { Search, Filter, Calendar } from 'lucide-react';
-import type { FilterState, GlobalStats } from '../lib/types';
+import { Search, X } from 'lucide-react';
+import type { FilterState, GestorSummary } from '../lib/types';
 
 interface FiltersProps {
   filters: FilterState;
-  stats: GlobalStats | null;
-  onFilterChange: (filters: Partial<FilterState>) => void;
+  gestores: GestorSummary[];
+  onFilterChange: (f: Partial<FilterState>) => void;
 }
 
-export function Filters({
-  filters,
-  stats,
-  onFilterChange,
-}: FiltersProps) {
-  const classificacoes = stats ? Object.keys(stats.byClassificacao) : [];
-
-  const hasActiveFilters =
-    filters.searchName ||
-    filters.searchId ||
-    filters.classificacao !== 'todas' ||
-    filters.dataInicio ||
-    filters.dataFim;
+export function Filters({ filters, gestores, onFilterChange }: FiltersProps) {
+  const hasFilters = filters.searchNome || filters.searchGestor;
 
   return (
-    <div className="bg-dark-800 border border-dark-700 rounded-xl p-4 mb-6">
-      <div className="flex flex-wrap gap-4 items-end">
-        {/* Busca por Nome */}
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-medium text-dark-200 mb-1.5">
-            Buscar por Nome
-          </label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
-            <input
-              type="text"
-              value={filters.searchName}
-              onChange={(e) => onFilterChange({ searchName: e.target.value })}
-              placeholder="Digite o nome..."
-              className="w-full pl-10 pr-4 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-dark-700 text-white"
-            />
-          </div>
-        </div>
-
-        {/* Busca por ID */}
-        <div className="w-32">
-          <label className="block text-sm font-medium text-dark-200 mb-1.5">
-            Buscar por ID
-          </label>
-          <input
-            type="text"
-            value={filters.searchId}
-            onChange={(e) => onFilterChange({ searchId: e.target.value })}
-            placeholder="ID"
-            className="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-dark-700 text-white"
-          />
-        </div>
-
-        {/* Filtro por Classificação */}
-        <div className="w-48">
-          <label className="block text-sm font-medium text-dark-200 mb-1.5 flex items-center gap-1">
-            <Filter className="w-4 h-4" />
-            Classificação
-          </label>
-          <select
-            value={filters.classificacao}
-            onChange={(e) => onFilterChange({ classificacao: e.target.value })}
-            className="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-dark-700 text-white"
-          >
-            <option value="todas">Todas</option>
-            {classificacoes.map((c) => (
-              <option key={c} value={c}>
-                {c} ({stats?.byClassificacao[c]})
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className="bg-dark-800 border border-dark-700 rounded-xl p-4 mb-6 flex flex-wrap gap-3 items-center">
+      {/* Busca por nome */}
+      <div className="relative flex-1 min-w-48">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400 pointer-events-none" />
+        <input
+          type="text"
+          placeholder="Buscar colaborador..."
+          value={filters.searchNome}
+          onChange={(e) => onFilterChange({ searchNome: e.target.value })}
+          className="w-full pl-9 pr-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-sm text-white placeholder-dark-400 focus:outline-none focus:border-primary-500"
+        />
       </div>
 
-      {/* Filtro por Data */}
-      <div className="flex flex-wrap gap-4 items-end mt-4 pt-4 border-t border-dark-700">
-        <div className="flex items-center gap-2 text-dark-300">
-          <Calendar className="w-4 h-4" />
-          <span className="text-sm font-medium">Período:</span>
-        </div>
+      {/* Filtro por gestor */}
+      <select
+        value={filters.searchGestor}
+        onChange={(e) => onFilterChange({ searchGestor: e.target.value })}
+        className="flex-1 min-w-48 px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg text-sm text-white focus:outline-none focus:border-primary-500"
+      >
+        <option value="">Todos os gestores</option>
+        {gestores.map((g) => (
+          <option key={g.gestor} value={g.gestor}>
+            {g.gestor} ({g.colaboradores.length})
+          </option>
+        ))}
+      </select>
 
-        <div className="w-40">
-          <label className="block text-xs font-medium text-dark-400 mb-1">
-            Data Início
-          </label>
-          <input
-            type="date"
-            value={filters.dataInicio || ''}
-            onChange={(e) => onFilterChange({ dataInicio: e.target.value || null })}
-            className="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-dark-700 text-white text-sm"
-          />
-        </div>
-
-        <div className="w-40">
-          <label className="block text-xs font-medium text-dark-400 mb-1">
-            Data Fim
-          </label>
-          <input
-            type="date"
-            value={filters.dataFim || ''}
-            onChange={(e) => onFilterChange({ dataFim: e.target.value || null })}
-            className="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-dark-700 text-white text-sm"
-          />
-        </div>
-
-        {(filters.dataInicio || filters.dataFim) && (
-          <button
-            onClick={() => onFilterChange({ dataInicio: null, dataFim: null })}
-            className="text-sm text-primary-400 hover:text-primary-300 font-medium"
-          >
-            Limpar datas
-          </button>
-        )}
-      </div>
-
-      {/* Limpar todos os filtros */}
-      {hasActiveFilters && (
-        <div className="mt-3 pt-3 border-t border-dark-700">
-          <button
-            onClick={() =>
-              onFilterChange({
-                searchName: '',
-                searchId: '',
-                classificacao: 'todas',
-                selectedCollaboratorId: null,
-                dataInicio: null,
-                dataFim: null,
-              })
-            }
-            className="text-sm text-primary-400 hover:text-primary-300 font-medium"
-          >
-            Limpar todos os filtros
-          </button>
-        </div>
+      {/* Limpar filtros */}
+      {hasFilters && (
+        <button
+          onClick={() => onFilterChange({ searchNome: '', searchGestor: '' })}
+          className="flex items-center gap-1.5 px-3 py-2 text-sm text-dark-300 hover:text-white bg-dark-700 hover:bg-dark-600 border border-dark-600 rounded-lg transition-colors"
+        >
+          <X className="w-3.5 h-3.5" />
+          Limpar
+        </button>
       )}
     </div>
   );

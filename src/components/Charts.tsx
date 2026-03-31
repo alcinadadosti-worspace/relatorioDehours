@@ -1,458 +1,194 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
-import type { CollaboratorSummary, GlobalStats, ParsedRecord } from '../lib/types';
-import { formatDate } from '../lib/time';
+import type { ColaboradorRecord, GestorSummary } from '../lib/types';
+import { formatMinutos } from '../lib/types';
 
-interface RankingChartProps {
-  summaries: CollaboratorSummary[];
-  showAll?: boolean;
-  title?: string;
+// ─── Gráfico por gestor ──────────────────────────────────────────────────────
+
+interface GestorChartProps {
+  gestores: GestorSummary[];
 }
 
-export function RankingChart({ summaries, showAll = false, title = 'Ranking por Total' }: RankingChartProps) {
+export function GestorChart({ gestores }: GestorChartProps) {
   const option = useMemo(() => {
-    // Ordena e pega top/bottom
-    const sorted = [...summaries].sort((a, b) => b.totalDeltaMinutes - a.totalDeltaMinutes);
-
-    let data: CollaboratorSummary[];
-    if (showAll) {
-      data = sorted;
-    } else {
-      const top10 = sorted.filter((s) => s.totalDeltaMinutes > 0).slice(0, 10);
-      const bottom10 = sorted.filter((s) => s.totalDeltaMinutes < 0).slice(-10);
-      data = [...top10, ...bottom10];
-    }
-
-    const names = data.map((s) => `${s.colaborador} (${s.id})`);
-    const values = data.map((s) => Math.round(s.totalDeltaMinutes));
+    const sorted = [...gestores].sort((a, b) => a.totalMinutos - b.totalMinutos);
+    const names = sorted.map((g) => g.gestor);
+    const hours = sorted.map((g) => parseFloat((g.totalMinutos / 60).toFixed(1)));
 
     return {
       backgroundColor: 'transparent',
-      title: {
-        text: title,
-        left: 'center',
-        textStyle: {
-          fontSize: 14,
-          fontWeight: 600,
-          color: '#e2e8f0',
-        },
-      },
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' },
-        backgroundColor: 'rgba(30, 41, 59, 0.95)',
+        backgroundColor: '#1e293b',
         borderColor: '#334155',
-        textStyle: {
-          color: '#e2e8f0',
-        },
-        formatter: (params: unknown[]) => {
-          const p = params[0] as { name: string; value: number };
-          const hours = Math.abs(p.value) / 60;
-          const sign = p.value >= 0 ? '+' : '-';
-          return `${p.name}<br/>${sign}${hours.toFixed(1)}h (${p.value}min)`;
+        textStyle: { color: '#e2e8f0' },
+        formatter: (params: { name: string; value: number }[]) => {
+          const p = params[0];
+          const gestor = sorted.find((g) => g.gestor === p.name);
+          if (!gestor) return '';
+          return `
+            <div style="font-weight:600;margin-bottom:4px">${p.name}</div>
+            <div>Saldo: <b>${formatMinutos(gestor.totalMinutos)}</b></div>
+            <div>Colaboradores: <b>${gestor.colaboradores.length}</b></div>
+            <div>Média: <b>${formatMinutos(gestor.mediaMinutos)}</b></div>
+            <div style="color:#4ade80">Positivos: ${gestor.positivosCount}</div>
+            <div style="color:#f87171">Negativos: ${gestor.negativosCount}</div>
+          `;
         },
       },
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        top: '50px',
-        containLabel: true,
-      },
+      grid: { left: '2%', right: '8%', top: '4%', bottom: '2%', containLabel: true },
       xAxis: {
         type: 'value',
-        axisLabel: {
-          color: '#94a3b8',
-          formatter: (value: number) => {
-            const hours = value / 60;
-            return `${hours.toFixed(0)}h`;
-          },
-        },
-        axisLine: {
-          lineStyle: {
-            color: '#334155',
-          },
-        },
-        splitLine: {
-          lineStyle: {
-            color: '#334155',
-          },
-        },
+        axisLabel: { color: '#94a3b8', formatter: (v: number) => `${v}h` },
+        splitLine: { lineStyle: { color: '#1e293b' } },
       },
       yAxis: {
         type: 'category',
-        data: names.reverse(),
+        data: names,
         axisLabel: {
-          width: 150,
+          color: '#94a3b8',
+          width: 160,
           overflow: 'truncate',
           fontSize: 11,
-          color: '#94a3b8',
-        },
-        axisLine: {
-          lineStyle: {
-            color: '#334155',
-          },
-        },
-        splitLine: {
-          lineStyle: {
-            color: '#334155',
-          },
         },
       },
       series: [
         {
           type: 'bar',
-          data: values.reverse().map((v) => ({
+          data: hours.map((v, i) => ({
+            value: v,
+            itemStyle: { color: sorted[i].totalMinutos >= 0 ? '#4ade80' : '#f87171', borderRadius: [0, 4, 4, 0] },
+          })),
+          label: {
+            show: true,
+            position: 'right',
+            color: '#94a3b8',
+            fontSize: 11,
+            formatter: (p: { dataIndex: number }) => formatMinutos(sorted[p.dataIndex].totalMinutos),
+          },
+        },
+      ],
+    };
+  }, [gestores]);
+
+  return (
+    <ReactECharts
+      option={option}
+      style={{ height: Math.max(300, gestores.length * 48) }}
+      opts={{ renderer: 'svg' }}
+    />
+  );
+}
+
+// ─── Ranking de colaboradores ────────────────────────────────────────────────
+
+interface RankingChartProps {
+  records: ColaboradorRecord[];
+}
+
+export function RankingChart({ records }: RankingChartProps) {
+  const [mode, setMode] = useState<'piores' | 'melhores'>('piores');
+
+  const sorted = useMemo(() => {
+    const s = [...records].sort((a, b) =>
+      mode === 'piores' ? a.minutos - b.minutos : b.minutos - a.minutos
+    );
+    return s.slice(0, 15);
+  }, [records, mode]);
+
+  const option = useMemo(() => {
+    const names = sorted.map((r) => r.nome);
+    const hours = sorted.map((r) => parseFloat((r.minutos / 60).toFixed(1)));
+
+    return {
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        backgroundColor: '#1e293b',
+        borderColor: '#334155',
+        textStyle: { color: '#e2e8f0' },
+        formatter: (params: { name: string; dataIndex: number }[]) => {
+          const p = params[0];
+          const r = sorted[p.dataIndex];
+          return `
+            <div style="font-weight:600;margin-bottom:4px">${r.nome}</div>
+            <div>Gestor: ${r.gestor}</div>
+            <div>Saldo: <b>${r.saldoTotal || formatMinutos(r.minutos)}</b></div>
+          `;
+        },
+      },
+      grid: { left: '2%', right: '8%', top: '4%', bottom: '2%', containLabel: true },
+      xAxis: {
+        type: 'value',
+        axisLabel: { color: '#94a3b8', formatter: (v: number) => `${v}h` },
+        splitLine: { lineStyle: { color: '#1e293b' } },
+      },
+      yAxis: {
+        type: 'category',
+        data: [...names].reverse(),
+        axisLabel: {
+          color: '#94a3b8',
+          width: 160,
+          overflow: 'truncate',
+          fontSize: 11,
+        },
+      },
+      series: [
+        {
+          type: 'bar',
+          data: [...hours].reverse().map((v, i) => ({
             value: v,
             itemStyle: {
-              color: v >= 0 ? '#22c55e' : '#ef4444',
-              borderRadius: v >= 0 ? [0, 4, 4, 0] : [4, 0, 0, 4],
+              color: [...sorted].reverse()[i].minutos >= 0 ? '#4ade80' : '#f87171',
+              borderRadius: [0, 4, 4, 0],
             },
           })),
           label: {
             show: true,
             position: 'right',
-            formatter: (params: { value: number }) => {
-              const hours = Math.abs(params.value) / 60;
-              return `${hours.toFixed(1)}h`;
-            },
-            fontSize: 10,
-            color: '#e2e8f0',
-          },
-        },
-      ],
-    };
-  }, [summaries, showAll, title]);
-
-  const height = showAll
-    ? Math.max(400, summaries.length * 25)
-    : Math.max(300, Math.min(20, summaries.length) * 25);
-
-  return <ReactECharts option={option} style={{ height: `${height}px` }} />;
-}
-
-interface ClassificacaoChartProps {
-  stats: GlobalStats;
-  title?: string;
-}
-
-export function ClassificacaoChart({ stats, title = 'Distribuição por Classificação' }: ClassificacaoChartProps) {
-  const option = useMemo(() => {
-    const data = Object.entries(stats.byClassificacao)
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value);
-
-    return {
-      backgroundColor: 'transparent',
-      title: {
-        text: title,
-        left: 'center',
-        textStyle: {
-          fontSize: 14,
-          fontWeight: 600,
-          color: '#e2e8f0',
-        },
-      },
-      tooltip: {
-        trigger: 'item',
-        formatter: '{b}: {c} ({d}%)',
-        backgroundColor: 'rgba(30, 41, 59, 0.95)',
-        borderColor: '#334155',
-        textStyle: {
-          color: '#e2e8f0',
-        },
-      },
-      legend: {
-        orient: 'vertical',
-        right: '5%',
-        top: 'middle',
-        type: 'scroll',
-        textStyle: {
-          color: '#94a3b8',
-        },
-        pageTextStyle: {
-          color: '#94a3b8',
-        },
-      },
-      series: [
-        {
-          type: 'pie',
-          radius: ['40%', '70%'],
-          center: ['35%', '55%'],
-          avoidLabelOverlap: true,
-          itemStyle: {
-            borderRadius: 6,
-            borderColor: '#1e293b',
-            borderWidth: 2,
-          },
-          label: {
-            show: false,
-          },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: 14,
-              fontWeight: 'bold',
-              color: '#e2e8f0',
-            },
-          },
-          data: data.map((d, i) => ({
-            ...d,
-            itemStyle: {
-              color: getChartColor(i),
-            },
-          })),
-        },
-      ],
-    };
-  }, [stats, title]);
-
-  return <ReactECharts option={option} style={{ height: '300px' }} />;
-}
-
-interface TimelineChartProps {
-  records: ParsedRecord[];
-  title?: string;
-}
-
-export function TimelineChart({ records, title = 'Evolução por Data' }: TimelineChartProps) {
-  const option = useMemo(() => {
-    // Agrupa por data
-    const byDate: Record<string, { total: number; count: number }> = {};
-
-    const sortedRecords = [...records].sort((a, b) => {
-      if (a.data && b.data) return a.data.getTime() - b.data.getTime();
-      return a.rowIndex - b.rowIndex;
-    });
-
-    for (const record of sortedRecords) {
-      const key = record.data ? formatDate(record.data) : `Registro ${record.rowIndex}`;
-      if (!byDate[key]) {
-        byDate[key] = { total: 0, count: 0 };
-      }
-      byDate[key].total += record.deltaMinutes;
-      byDate[key].count++;
-    }
-
-    const dates = Object.keys(byDate);
-    const values = dates.map((d) => byDate[d].total);
-
-    // Calcula acumulado
-    let accumulated = 0;
-    const accumulatedValues = values.map((v) => {
-      accumulated += v;
-      return accumulated;
-    });
-
-    return {
-      backgroundColor: 'transparent',
-      title: {
-        text: title,
-        left: 'center',
-        textStyle: {
-          fontSize: 14,
-          fontWeight: 600,
-          color: '#e2e8f0',
-        },
-      },
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'cross',
-          crossStyle: {
             color: '#94a3b8',
-          },
-          lineStyle: {
-            color: '#94a3b8',
-          },
-        },
-        backgroundColor: 'rgba(30, 41, 59, 0.95)',
-        borderColor: '#334155',
-        textStyle: {
-          color: '#e2e8f0',
-        },
-        formatter: (params: unknown[]) => {
-          const p = params as { seriesName: string; name: string; value: number }[];
-          let result = p[0].name + '<br/>';
-          for (const item of p) {
-            const hours = item.value / 60;
-            const sign = item.value >= 0 ? '+' : '';
-            result += `${item.seriesName}: ${sign}${hours.toFixed(1)}h<br/>`;
-          }
-          return result;
-        },
-      },
-      legend: {
-        data: ['Diferença do Dia', 'Acumulado'],
-        top: '30px',
-        textStyle: {
-          color: '#94a3b8',
-        },
-      },
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        top: '80px',
-        containLabel: true,
-      },
-      xAxis: {
-        type: 'category',
-        data: dates,
-        axisLabel: {
-          rotate: 45,
-          fontSize: 10,
-          color: '#94a3b8',
-        },
-        axisLine: {
-          lineStyle: {
-            color: '#334155',
-          },
-        },
-        splitLine: {
-          lineStyle: {
-            color: '#334155',
-          },
-        },
-      },
-      yAxis: {
-        type: 'value',
-        axisLabel: {
-          color: '#94a3b8',
-          formatter: (value: number) => `${(value / 60).toFixed(0)}h`,
-        },
-        axisLine: {
-          lineStyle: {
-            color: '#334155',
-          },
-        },
-        splitLine: {
-          lineStyle: {
-            color: '#334155',
-          },
-        },
-      },
-      series: [
-        {
-          name: 'Diferença do Dia',
-          type: 'bar',
-          data: values.map((v) => ({
-            value: v,
-            itemStyle: {
-              color: v >= 0 ? '#22c55e' : '#ef4444',
-            },
-          })),
-        },
-        {
-          name: 'Acumulado',
-          type: 'line',
-          smooth: true,
-          data: accumulatedValues,
-          lineStyle: {
-            color: '#3b82f6',
-            width: 2,
-          },
-          itemStyle: {
-            color: '#3b82f6',
-          },
-          areaStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
-                { offset: 1, color: 'rgba(59, 130, 246, 0.05)' },
-              ],
-            },
-          },
-        },
-      ],
-    };
-  }, [records, title]);
-
-  return <ReactECharts option={option} style={{ height: '350px' }} />;
-}
-
-interface CollaboratorClassificacaoChartProps {
-  summary: CollaboratorSummary;
-}
-
-export function CollaboratorClassificacaoChart({ summary }: CollaboratorClassificacaoChartProps) {
-  const option = useMemo(() => {
-    const data = [
-      { name: 'Normal', value: summary.countNormal },
-      { name: 'Hora Extra', value: summary.countHoraExtra },
-      { name: 'Atraso', value: summary.countAtraso },
-      { name: 'Outros', value: summary.countOutros },
-    ].filter((d) => d.value > 0);
-
-    return {
-      backgroundColor: 'transparent',
-      tooltip: {
-        trigger: 'item',
-        formatter: '{b}: {c} ({d}%)',
-        backgroundColor: 'rgba(30, 41, 59, 0.95)',
-        borderColor: '#334155',
-        textStyle: {
-          color: '#e2e8f0',
-        },
-      },
-      series: [
-        {
-          type: 'pie',
-          radius: ['45%', '75%'],
-          center: ['50%', '50%'],
-          itemStyle: {
-            borderRadius: 6,
-            borderColor: '#1e293b',
-            borderWidth: 2,
-          },
-          label: {
-            show: true,
-            formatter: '{b}: {c}',
             fontSize: 11,
-            color: '#e2e8f0',
-          },
-          data: data.map((d) => ({
-            ...d,
-            itemStyle: {
-              color: getPieColor(d.name),
+            formatter: (p: { dataIndex: number }) => {
+              const r = [...sorted].reverse()[p.dataIndex];
+              return r.saldoTotal || formatMinutos(r.minutos);
             },
-          })),
+          },
         },
       ],
     };
-  }, [summary]);
+  }, [sorted]);
 
-  return <ReactECharts option={option} style={{ height: '250px' }} />;
-}
-
-// Cores para gráficos
-function getChartColor(index: number): string {
-  const colors = [
-    '#3b82f6', // blue
-    '#22c55e', // green
-    '#f59e0b', // amber
-    '#ef4444', // red
-    '#8b5cf6', // violet
-    '#ec4899', // pink
-    '#06b6d4', // cyan
-    '#84cc16', // lime
-    '#f97316', // orange
-    '#6366f1', // indigo
-  ];
-  return colors[index % colors.length];
-}
-
-function getPieColor(name: string): string {
-  const colorMap: Record<string, string> = {
-    Normal: '#22c55e',
-    'Hora Extra': '#3b82f6',
-    Atraso: '#ef4444',
-    Outros: '#9ca3af',
-  };
-  return colorMap[name] || '#6b7280';
+  return (
+    <div>
+      <div className="flex gap-2 mb-3">
+        <button
+          onClick={() => setMode('piores')}
+          className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${
+            mode === 'piores'
+              ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+              : 'text-dark-400 hover:text-white'
+          }`}
+        >
+          15 Piores
+        </button>
+        <button
+          onClick={() => setMode('melhores')}
+          className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${
+            mode === 'melhores'
+              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+              : 'text-dark-400 hover:text-white'
+          }`}
+        >
+          15 Melhores
+        </button>
+      </div>
+      <ReactECharts
+        option={option}
+        style={{ height: Math.max(300, sorted.length * 40) }}
+        opts={{ renderer: 'svg' }}
+      />
+    </div>
+  );
 }

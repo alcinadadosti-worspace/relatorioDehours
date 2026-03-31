@@ -1,446 +1,53 @@
-import type {
-  ParsedRecord,
-  CollaboratorSummary,
-  AggregationConfig,
-  GlobalStats,
-} from './types';
+import type { ColaboradorRecord, GestorSummary, GlobalStats, FilterState } from './types';
 
-/**
- * Configuração padrão (sem bônus/penalidade)
- */
-export const DEFAULT_CONFIG: AggregationConfig = {
-  extraBonusHours: 0,      // Sem bônus
-  atrasoPenaltyHours: 0,   // Sem penalidade
-};
+export function groupByGestor(records: ColaboradorRecord[]): GestorSummary[] {
+  const map = new Map<string, ColaboradorRecord[]>();
 
-/**
- * Encontra o nome mais frequente para um conjunto de registros
- */
-function getMostFrequentName(records: ParsedRecord[]): {
-  mainName: string;
-  alternativeNames: string[];
-} {
-  const nameCount: Record<string, number> = {};
-
-  for (const record of records) {
-    const name = record.colaborador.trim();
-    if (name) {
-      nameCount[name] = (nameCount[name] || 0) + 1;
-    }
+  for (const r of records) {
+    const arr = map.get(r.gestor) ?? [];
+    arr.push(r);
+    map.set(r.gestor, arr);
   }
 
-  const names = Object.entries(nameCount).sort((a, b) => b[1] - a[1]);
-
-  if (names.length === 0) {
-    return { mainName: '', alternativeNames: [] };
-  }
-
-  const mainName = names[0][0];
-  const alternativeNames = names.slice(1).map(([name]) => name);
-
-  return { mainName, alternativeNames };
+  return Array.from(map.entries())
+    .map(([gestor, colaboradores]) => {
+      const totalMinutos = colaboradores.reduce((s, c) => s + c.minutos, 0);
+      return {
+        gestor,
+        colaboradores,
+        totalMinutos,
+        mediaMinutos: Math.round(totalMinutos / colaboradores.length),
+        positivosCount: colaboradores.filter((c) => c.minutos > 0).length,
+        negativosCount: colaboradores.filter((c) => c.minutos < 0).length,
+        zeradosCount: colaboradores.filter((c) => c.minutos === 0).length,
+      };
+    })
+    .sort((a, b) => b.totalMinutos - a.totalMinutos);
 }
 
-/**
- * Normaliza classificação para comparação
- */
-function normalizeClassificacao(classificacao: string): string {
-  return classificacao
-    .trim()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase();
-}
-
-/**
- * Verifica se a classificação é "Hora Extra"
- */
-function isHoraExtra(classificacao: string): boolean {
-  const normalized = normalizeClassificacao(classificacao);
-  return (
-    normalized === 'hora extra' ||
-    normalized === 'horaextra' ||
-    normalized === 'extra' ||
-    normalized === 'overtime'
-  );
-}
-
-/**
- * Verifica se a classificação é "Atraso"
- */
-function isAtraso(classificacao: string): boolean {
-  const normalized = normalizeClassificacao(classificacao);
-  return (
-    normalized === 'atraso' ||
-    normalized === 'late' ||
-    normalized === 'atrasado'
-  );
-}
-
-/**
- * Verifica se a classificação é "Normal"
- */
-function isNormal(classificacao: string): boolean {
-  const normalized = normalizeClassificacao(classificacao);
-  return (
-    normalized === 'normal' ||
-    normalized === 'regular' ||
-    normalized === 'ok'
-  );
-}
-
-/**
- * Agrupa registros por colaborador e calcula totais
- */
-export function aggregateByCollaborator(
-  records: ParsedRecord[],
-  config: AggregationConfig
-): CollaboratorSummary[] {
-  // Agrupa por ID
-  const groups: Record<string, ParsedRecord[]> = {};
-
-  for (const record of records) {
-    const id = record.id;
-    if (!groups[id]) {
-      groups[id] = [];
-    }
-    groups[id].push(record);
-  }
-
-  // Processa cada grupo
-  const summaries: CollaboratorSummary[] = [];
-
-  for (const [id, groupRecords] of Object.entries(groups)) {
-    const { mainName, alternativeNames } = getMostFrequentName(groupRecords);
-
-    // Contadores
-    let totalDeltaMinutes = 0;
-    let countDias = 0;
-    let countSemDados = 0;
-    let countParseErrors = 0;
-    let countAjuste = 0;
-    let countHoraExtra = 0;
-    let countAtraso = 0;
-    let countNormal = 0;
-    let countOutros = 0;
-    let totalExtraBonusMinutes = 0;
-    let totalAtrasoPenaltyMinutes = 0;
-
-    for (const record of groupRecords) {
-      // Se é ajuste (entrada após 10h ou intervalo/retorno após 17h), não contabiliza no total
-      if (record.isAjuste) {
-        countAjuste++;
-        continue; // Pula para o próximo registro sem somar
-      }
-
-      // Se a diferença for 10 minutos ou menos (em valor absoluto), não contabiliza
-      if (Math.abs(record.deltaMinutes) <= 10) {
-        continue; // Pula diferenças pequenas
-      }
-
-      // Soma diferença bruta (apenas se não for ajuste e > 10 min)
-      totalDeltaMinutes += record.deltaMinutes;
-
-      // Contadores
-      if (record.isMissing) {
-        countSemDados++;
-      } else {
-        countDias++;
-      }
-
-      if (record.parseError) {
-        countParseErrors++;
-      }
-
-      // Classificação e ajustes
-      const classificacao = record.classificacao;
-
-      if (isHoraExtra(classificacao)) {
-        countHoraExtra++;
-        totalExtraBonusMinutes += config.extraBonusHours * 60;
-      } else if (isAtraso(classificacao)) {
-        countAtraso++;
-        totalAtrasoPenaltyMinutes += config.atrasoPenaltyHours * 60;
-      } else if (isNormal(classificacao)) {
-        countNormal++;
-      } else {
-        countOutros++;
-      }
-    }
-
-    // Total ajustado
-    const adjustedTotalMinutes =
-      totalDeltaMinutes + totalExtraBonusMinutes - totalAtrasoPenaltyMinutes;
-
-    summaries.push({
-      id,
-      colaborador: mainName,
-      alternativeNames,
-      totalDeltaMinutes,
-      countDias,
-      countSemDados,
-      countParseErrors,
-      countAjuste,
-      countHoraExtra,
-      countAtraso,
-      countNormal,
-      countOutros,
-      totalExtraBonusMinutes,
-      totalAtrasoPenaltyMinutes,
-      adjustedTotalMinutes,
-      records: groupRecords,
-    });
-  }
-
-  // Ordena por ID
-  summaries.sort((a, b) => {
-    const aNum = parseInt(a.id, 10);
-    const bNum = parseInt(b.id, 10);
-    if (!isNaN(aNum) && !isNaN(bNum)) {
-      return aNum - bNum;
-    }
-    return a.id.localeCompare(b.id);
-  });
-
-  return summaries;
-}
-
-/**
- * Calcula estatísticas globais
- */
-export function calculateGlobalStats(
-  records: ParsedRecord[],
-  summaries: CollaboratorSummary[]
-): GlobalStats {
-  let totalBrutoMinutes = 0;
-  let totalAjustadoMinutes = 0;
-  let totalSemDados = 0;
-  let totalParseErrors = 0;
-  let totalAjuste = 0;
-  let countHoraExtra = 0;
-  let countAtraso = 0;
-  let countNormal = 0;
-  let countOutros = 0;
-
-  const byClassificacao: Record<string, number> = {};
-
-  for (const record of records) {
-    // Conta ajustes (não contabilizados no total)
-    if (record.isAjuste) {
-      totalAjuste++;
-      continue; // Não soma no bruto
-    }
-
-    // Se a diferença for 10 minutos ou menos (em valor absoluto), não contabiliza
-    if (Math.abs(record.deltaMinutes) <= 10) {
-      continue; // Pula diferenças pequenas
-    }
-
-    totalBrutoMinutes += record.deltaMinutes;
-
-    if (record.isMissing) {
-      totalSemDados++;
-    }
-
-    if (record.parseError) {
-      totalParseErrors++;
-    }
-
-    const classificacao = record.classificacao.trim() || 'Não informado';
-    byClassificacao[classificacao] = (byClassificacao[classificacao] || 0) + 1;
-
-    if (isHoraExtra(record.classificacao)) {
-      countHoraExtra++;
-    } else if (isAtraso(record.classificacao)) {
-      countAtraso++;
-    } else if (isNormal(record.classificacao)) {
-      countNormal++;
-    } else {
-      countOutros++;
-    }
-  }
-
-  for (const summary of summaries) {
-    totalAjustadoMinutes += summary.adjustedTotalMinutes;
-  }
+export function calculateGlobalStats(records: ColaboradorRecord[]): GlobalStats {
+  const gestores = new Set(records.map((r) => r.gestor));
+  const totalMinutos = records.reduce((s, r) => s + r.minutos, 0);
 
   return {
-    totalCollaborators: summaries.length,
-    totalRecords: records.length,
-    totalBrutoMinutes,
-    totalAjustadoMinutes,
-    totalSemDados,
-    totalParseErrors,
-    totalAjuste,
-    countHoraExtra,
-    countAtraso,
-    countNormal,
-    countOutros,
-    byClassificacao,
+    totalColaboradores: records.length,
+    totalGestores: gestores.size,
+    totalMinutos,
+    positivosCount: records.filter((r) => r.minutos > 0).length,
+    negativosCount: records.filter((r) => r.minutos < 0).length,
+    zeradosCount: records.filter((r) => r.minutos === 0).length,
+    mediaMinutos: records.length > 0 ? Math.round(totalMinutos / records.length) : 0,
   };
 }
 
-/**
- * Retorna top N colaboradores por total ajustado (positivos)
- */
-export function getTopPositive(
-  summaries: CollaboratorSummary[],
-  n: number = 10
-): CollaboratorSummary[] {
-  return [...summaries]
-    .filter((s) => s.adjustedTotalMinutes > 0)
-    .sort((a, b) => b.adjustedTotalMinutes - a.adjustedTotalMinutes)
-    .slice(0, n);
-}
-
-/**
- * Retorna top N colaboradores por total ajustado (negativos)
- */
-export function getTopNegative(
-  summaries: CollaboratorSummary[],
-  n: number = 10
-): CollaboratorSummary[] {
-  return [...summaries]
-    .filter((s) => s.adjustedTotalMinutes < 0)
-    .sort((a, b) => a.adjustedTotalMinutes - b.adjustedTotalMinutes)
-    .slice(0, n);
-}
-
-/**
- * Filtra colaboradores por nome (busca parcial)
- */
-export function filterByName(
-  summaries: CollaboratorSummary[],
-  searchTerm: string
-): CollaboratorSummary[] {
-  if (!searchTerm.trim()) {
-    return summaries;
-  }
-
-  const term = searchTerm.toLowerCase().trim();
-
-  return summaries.filter((s) => {
-    const mainMatch = s.colaborador.toLowerCase().includes(term);
-    const altMatch = s.alternativeNames.some((name) =>
-      name.toLowerCase().includes(term)
-    );
-    return mainMatch || altMatch;
-  });
-}
-
-/**
- * Filtra colaboradores por ID
- */
-export function filterById(
-  summaries: CollaboratorSummary[],
-  searchId: string
-): CollaboratorSummary[] {
-  if (!searchId.trim()) {
-    return summaries;
-  }
-
-  const term = searchId.trim();
-
-  return summaries.filter((s) => s.id.includes(term));
-}
-
-/**
- * Filtra registros por intervalo de datas
- */
-export function filterRecordsByDate(
-  records: ParsedRecord[],
-  dataInicio: string | null,
-  dataFim: string | null
-): ParsedRecord[] {
-  if (!dataInicio && !dataFim) {
-    return records;
-  }
-
-  const inicio = dataInicio ? new Date(dataInicio + 'T00:00:00') : null;
-  const fim = dataFim ? new Date(dataFim + 'T23:59:59') : null;
-
+export function applyFilters(
+  records: ColaboradorRecord[],
+  filters: FilterState
+): ColaboradorRecord[] {
   return records.filter((r) => {
-    if (!r.data) return true; // Mantém registros sem data
-
-    if (inicio && r.data < inicio) return false;
-    if (fim && r.data > fim) return false;
-
+    if (filters.searchNome && !r.nome.toLowerCase().includes(filters.searchNome.toLowerCase()))
+      return false;
+    if (filters.searchGestor && r.gestor !== filters.searchGestor) return false;
     return true;
   });
-}
-
-/**
- * Aplica todos os filtros
- */
-export function applyFilters(
-  summaries: CollaboratorSummary[],
-  filters: {
-    searchName?: string;
-    searchId?: string;
-    classificacao?: string;
-    dataInicio?: string | null;
-    dataFim?: string | null;
-  }
-): CollaboratorSummary[] {
-  let result = summaries;
-
-  if (filters.searchName) {
-    result = filterByName(result, filters.searchName);
-  }
-
-  if (filters.searchId) {
-    result = filterById(result, filters.searchId);
-  }
-
-  if (filters.classificacao && filters.classificacao !== 'todas') {
-    // Filtra colaboradores que têm pelo menos um registro com essa classificação
-    result = result.filter((s) =>
-      s.records.some((r) => {
-        const normalized = normalizeClassificacao(r.classificacao);
-        const filterNormalized = normalizeClassificacao(filters.classificacao!);
-        return normalized === filterNormalized;
-      })
-    );
-  }
-
-  // Filtra por data - filtra os registros de cada colaborador
-  if (filters.dataInicio || filters.dataFim) {
-    result = result.map((s) => {
-      const filteredRecords = filterRecordsByDate(s.records, filters.dataInicio || null, filters.dataFim || null);
-
-      // Recalcula totais com registros filtrados
-      let totalDeltaMinutes = 0;
-      let countDias = 0;
-      let countSemDados = 0;
-      let countAjuste = 0;
-
-      for (const record of filteredRecords) {
-        if (record.isAjuste) {
-          countAjuste++;
-          continue;
-        }
-        if (Math.abs(record.deltaMinutes) <= 10) {
-          continue;
-        }
-        totalDeltaMinutes += record.deltaMinutes;
-        if (record.isMissing) {
-          countSemDados++;
-        } else {
-          countDias++;
-        }
-      }
-
-      return {
-        ...s,
-        records: filteredRecords,
-        totalDeltaMinutes,
-        adjustedTotalMinutes: totalDeltaMinutes,
-        countDias,
-        countSemDados,
-        countAjuste,
-      };
-    }).filter((s) => s.records.length > 0); // Remove colaboradores sem registros no período
-  }
-
-  return result;
 }
