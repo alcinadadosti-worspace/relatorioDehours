@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { BarChart3, FileSpreadsheet, RefreshCw } from 'lucide-react';
+import { BarChart3, RefreshCw } from 'lucide-react';
 
 import type { AppState, ColaboradorRecord, FilterState } from './lib/types';
 import { readExcelFile, parseWorkbookBuffer } from './lib/excel';
@@ -13,14 +13,12 @@ export default function App() {
   const [appState, setAppState] = useState<AppState>('loading');
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [isDefaultFile, setIsDefaultFile] = useState(false);
   const [records, setRecords] = useState<ColaboradorRecord[]>([]);
   const [filters, setFilters] = useState<FilterState>({ searchNome: '', searchGestor: '' });
 
   const loadDefaultFile = useCallback(async () => {
     setAppState('loading');
     setError(null);
-    setIsDefaultFile(true);
     try {
       const res = await fetch(DEFAULT_FILE);
       if (!res.ok) throw new Error('not found');
@@ -31,7 +29,6 @@ export default function App() {
       setAppState('ready');
     } catch {
       setAppState('empty');
-      setIsDefaultFile(false);
     }
   }, []);
 
@@ -41,7 +38,6 @@ export default function App() {
     setAppState('loading');
     setError(null);
     setFileName(file.name);
-    setIsDefaultFile(false);
     try {
       const data = await readExcelFile(file);
       setRecords(data);
@@ -51,15 +47,6 @@ export default function App() {
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
       setAppState('error');
     }
-  }, []);
-
-  const handleReset = useCallback(() => {
-    setAppState('empty');
-    setError(null);
-    setFileName(null);
-    setRecords([]);
-    setFilters({ searchNome: '', searchGestor: '' });
-    setIsDefaultFile(false);
   }, []);
 
   const handleFilterChange = useCallback((f: Partial<FilterState>) => {
@@ -103,24 +90,13 @@ export default function App() {
             </div>
 
             {appState === 'ready' && (
-              <div className="flex items-center gap-2">
-                {isDefaultFile && (
-                  <button
-                    onClick={loadDefaultFile}
-                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-primary-400 hover:text-primary-300 hover:bg-dark-700 rounded-lg transition-colors"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    Atualizar
-                  </button>
-                )}
-                <button
-                  onClick={handleReset}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm text-dark-300 hover:text-white hover:bg-dark-700 rounded-lg transition-colors"
-                >
-                  <FileSpreadsheet className="w-4 h-4" />
-                  {isDefaultFile ? 'Outro arquivo' : 'Novo arquivo'}
-                </button>
-              </div>
+              <button
+                onClick={loadDefaultFile}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm text-primary-400 hover:text-primary-300 hover:bg-dark-700 rounded-lg transition-colors"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Atualizar
+              </button>
             )}
           </div>
         </div>

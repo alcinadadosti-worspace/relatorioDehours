@@ -3,6 +3,29 @@ import type { ColaboradorRecord } from './types';
 
 const REQUIRED_COLUMNS = ['Nome', 'Gestor', 'Minutos'];
 
+// Pessoas excluídas da análise (comparação sem acento e sem maiúsculas)
+const EXCLUDED_NAMES = new Set([
+  'leidiane souza',
+  'luiz henrique martins tavares',
+  'moises santiago',
+  'cledjon dias dos santos',
+  'paulo rogerio santos',
+  'millena sthefany dos santos cruz',
+  'raquele fragoso da silva',
+  'lianda melinda santos calixto',
+  'luis henrique batista dos santos',
+  'anderson rosalvo rocha dos santos',
+  'yuri castro gomes',
+]);
+
+function normalizeForExclusion(name: string): string {
+  return name.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+function isExcluded(nome: string): boolean {
+  return EXCLUDED_NAMES.has(normalizeForExclusion(nome));
+}
+
 function normalizeHeader(h: string): string {
   return h.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
@@ -60,7 +83,7 @@ function parseWorkbook(wb: XLSX.WorkBook): ColaboradorRecord[] {
       const saldoTotal = colSaldo ? String(row[colSaldo] ?? '').trim() : '';
       const minutos = Number(row[colMinutos] ?? 0);
 
-      if (!nome) continue;
+      if (!nome || isExcluded(nome)) continue;
 
       records.push({ nome, gestor, saldoTotal, minutos });
     }
