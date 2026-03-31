@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react';
-import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
+import { useState, useMemo, useCallback } from 'react';
+import { ChevronUp, ChevronDown, ChevronsUpDown, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import type { ColaboradorRecord } from '../lib/types';
 import { formatMinutos } from '../lib/types';
 
@@ -39,6 +40,26 @@ export function ColaboradoresTable({ records }: ColaboradoresTableProps) {
     setPage(1);
   };
 
+  const handleExport = useCallback(() => {
+    const rows = sorted.map((r, i) => ({
+      '#': i + 1,
+      Nome: r.nome,
+      Gestor: r.gestor,
+      'Saldo Total': r.saldoTotal || formatMinutos(r.minutos),
+      Minutos: r.minutos,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [{ wch: 4 }, { wch: 40 }, { wch: 35 }, { wch: 14 }, { wch: 10 }];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Saldo de Horas');
+
+    const now = new Date();
+    const ts = `${now.getDate().toString().padStart(2, '0')}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getFullYear()}`;
+    XLSX.writeFile(wb, `saldo_horas_${ts}.xlsx`);
+  }, [sorted]);
+
   const SortIcon = ({ col }: { col: SortKey }) => {
     if (sortKey !== col) return <ChevronsUpDown className="w-3.5 h-3.5 text-dark-500" />;
     return sortDir === 'asc'
@@ -48,6 +69,18 @@ export function ColaboradoresTable({ records }: ColaboradoresTableProps) {
 
   return (
     <div className="bg-dark-800 border border-dark-700 rounded-xl overflow-hidden">
+      {/* Cabeçalho com botão de exportar */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-dark-700">
+        <span className="text-sm text-dark-400">{sorted.length} colaboradores</span>
+        <button
+          onClick={handleExport}
+          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary-400 hover:text-primary-300 bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/20 rounded-lg transition-colors"
+        >
+          <Download className="w-4 h-4" />
+          Exportar Excel
+        </button>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
