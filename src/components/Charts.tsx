@@ -88,11 +88,11 @@ interface RankingChartProps {
 }
 
 export function RankingChart({ records }: RankingChartProps) {
-  const [mode, setMode] = useState<'piores' | 'melhores'>('piores');
+  const [mode, setMode] = useState<'menor' | 'maior'>('menor');
 
   const sorted = useMemo(() => {
     const s = [...records].sort((a, b) =>
-      mode === 'piores' ? a.minutos - b.minutos : b.minutos - a.minutos
+      mode === 'menor' ? a.minutos - b.minutos : b.minutos - a.minutos
     );
     return s.slice(0, 15);
   }, [records, mode]);
@@ -164,24 +164,24 @@ export function RankingChart({ records }: RankingChartProps) {
     <div>
       <div className="flex gap-2 mb-3">
         <button
-          onClick={() => setMode('piores')}
+          onClick={() => setMode('menor')}
           className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${
-            mode === 'piores'
-              ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+            mode === 'menor'
+              ? 'bg-primary-600/20 text-primary-400 border border-primary-500/30'
               : 'text-dark-400 hover:text-white'
           }`}
         >
-          15 Piores
+          Menor saldo
         </button>
         <button
-          onClick={() => setMode('melhores')}
+          onClick={() => setMode('maior')}
           className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${
-            mode === 'melhores'
-              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+            mode === 'maior'
+              ? 'bg-primary-600/20 text-primary-400 border border-primary-500/30'
               : 'text-dark-400 hover:text-white'
           }`}
         >
-          15 Melhores
+          Maior saldo
         </button>
       </div>
       <ReactECharts
