@@ -1,27 +1,29 @@
 @echo off
 chcp 65001 >nul
-title Atualizar Dados - Relatório de Horas
+title Atualizar Dados - Saldo de Horas
 
 echo ========================================
 echo    ATUALIZAR DADOS DO RELATORIO
 echo ========================================
 echo.
 
-:: Verifica se o arquivo dados.xlsx existe na pasta public
-if not exist "public\dados.xlsx" (
-    echo ERRO: Arquivo public\dados.xlsx nao encontrado!
+:: Verifica se o arquivo existe na pasta public
+if not exist "public\saldo_por_gestor.xlsx" (
+    echo ERRO: Arquivo public\saldo_por_gestor.xlsx nao encontrado!
+    echo.
+    echo Coloque a planilha em: public\saldo_por_gestor.xlsx
     echo.
     pause
     exit /b 1
 )
 
-echo Arquivo encontrado: public\dados.xlsx
+echo Arquivo encontrado: public\saldo_por_gestor.xlsx
 echo.
 echo Enviando para o GitHub...
 echo.
 
 :: Adiciona, commita e envia
-git add public/dados.xlsx
+git add public/saldo_por_gestor.xlsx
 if %errorlevel% neq 0 (
     echo ERRO ao adicionar arquivo!
     pause
@@ -32,7 +34,7 @@ git commit -m "Atualiza dados - %date% %time:~0,5%"
 if %errorlevel% neq 0 (
     echo.
     echo Nenhuma alteracao detectada no arquivo.
-    echo Certifique-se de que substituiu o arquivo dados.xlsx
+    echo Certifique-se de que substituiu o arquivo saldo_por_gestor.xlsx
     echo.
     pause
     exit /b 1

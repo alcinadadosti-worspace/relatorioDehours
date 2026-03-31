@@ -27,4 +27,4 @@ npm-debug.log*
 
 # Excel files (except public data)
 *.xlsx
-!public/dados.xlsx
+!public/saldo_por_gestor.xlsx
