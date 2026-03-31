@@ -79,7 +79,11 @@ function parseWorkbook(wb: XLSX.WorkBook): ColaboradorRecord[] {
 
     for (const row of rows) {
       const nome = String(row[colNome] ?? '').trim();
-      const gestor = String(row[colGestor] ?? '').trim() || 'Sem Gestor';
+      const gestorRaw = String(row[colGestor] ?? '').trim();
+      const gestor =
+        !gestorRaw || gestorRaw.toLowerCase() === 'sem gestor'
+          ? 'Fernando Ramos'
+          : gestorRaw;
       const saldoTotal = colSaldo ? String(row[colSaldo] ?? '').trim() : '';
       const minutos = Number(row[colMinutos] ?? 0);
 
