@@ -23,7 +23,7 @@ export default function App() {
     setAppState('loading');
     setError(null);
     try {
-      const res = await fetch(`${DEFAULT_FILE}?v=${Date.now()}`);
+      const res = await fetch(DEFAULT_FILE);
       if (!res.ok) throw new Error('not found');
       const buf = new Uint8Array(await res.arrayBuffer());
       const data = parseWorkbookBuffer(buf);
