@@ -70,7 +70,7 @@ function parseWorkbook(wb: XLSX.WorkBook): ColaboradorRecord[] {
 
     if (missing.length > 0) continue;
 
-    const colNome = findColumn(headers, 'Nome') ?? findColumn(headers, 'Colaborador');
+    const colNome = findColumn(headers, 'Nome') ?? findColumn(headers, 'Colaborador') ?? '';
     const colGestor = findColumn(headers, 'Gestor')!;
     const colSaldo = findColumn(headers, 'Saldo Total');
     const colMinutos = findColumn(headers, 'Minutos')!;
