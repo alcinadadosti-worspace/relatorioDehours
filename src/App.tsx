@@ -30,7 +30,8 @@ export default function App() {
       setAllRecords(data);
       setFileName('saldo_por_gestor.xlsx');
       setAppState('ready');
-    } catch {
+    } catch (err) {
+      console.error('[loadDefaultFile] erro:', err);
       setAppState('empty');
     }
   }, []);
