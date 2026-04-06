@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import type { ColaboradorRecord } from './types';
 
-const REQUIRED_COLUMNS = ['Nome', 'Gestor', 'Minutos'];
+const REQUIRED_COLUMNS = ['Gestor', 'Minutos'];
 
 // Pessoas excluídas da análise (comparação sem acento e sem maiúsculas)
 const EXCLUDED_NAMES = new Set([
@@ -70,7 +70,7 @@ function parseWorkbook(wb: XLSX.WorkBook): ColaboradorRecord[] {
 
     if (missing.length > 0) continue;
 
-    const colNome = findColumn(headers, 'Nome')!;
+    const colNome = findColumn(headers, 'Nome') ?? findColumn(headers, 'Colaborador');
     const colGestor = findColumn(headers, 'Gestor')!;
     const colSaldo = findColumn(headers, 'Saldo Total');
     const colMinutos = findColumn(headers, 'Minutos')!;
@@ -87,7 +87,7 @@ function parseWorkbook(wb: XLSX.WorkBook): ColaboradorRecord[] {
       const saldoTotal = colSaldo ? String(row[colSaldo] ?? '').trim() : '';
       const minutos = Number(row[colMinutos] ?? 0);
 
-      if (!nome || isExcluded(nome)) continue;
+      if (!colNome || !nome || isExcluded(nome)) continue;
 
       records.push({ nome, gestor, saldoTotal, minutos });
     }
