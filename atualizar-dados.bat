@@ -7,17 +7,30 @@ echo    ATUALIZAR DADOS DO RELATORIO
 echo ========================================
 echo.
 
-:: Verifica se o arquivo existe na pasta public
-if not exist "public\saldo_por_gestor.xlsx" (
-    echo ERRO: Arquivo public\saldo_por_gestor.xlsx nao encontrado!
+:: Verifica se o arquivo RelatorioBancoHoras.xls existe na raiz
+if not exist "RelatorioBancoHoras.xls" (
+    echo ERRO: Arquivo RelatorioBancoHoras.xls nao encontrado na pasta raiz!
     echo.
-    echo Coloque a planilha em: public\saldo_por_gestor.xlsx
+    echo Coloque o relatorio exportado do sistema em:
+    echo   %cd%\RelatorioBancoHoras.xls
     echo.
     pause
     exit /b 1
 )
 
-echo Arquivo encontrado: public\saldo_por_gestor.xlsx
+echo Arquivo encontrado: RelatorioBancoHoras.xls
+echo Copiando para public\saldo_por_gestor.xlsx...
+echo.
+
+:: Copia o arquivo para a pasta public (o servidor vai servir este arquivo)
+copy /Y "RelatorioBancoHoras.xls" "public\saldo_por_gestor.xlsx" >nul
+if %errorlevel% neq 0 (
+    echo ERRO ao copiar arquivo!
+    pause
+    exit /b 1
+)
+
+echo Arquivo copiado com sucesso.
 echo.
 echo Enviando para o GitHub...
 echo.
@@ -34,7 +47,7 @@ git commit -m "Atualiza dados - %date% %time:~0,5%"
 if %errorlevel% neq 0 (
     echo.
     echo Nenhuma alteracao detectada no arquivo.
-    echo Certifique-se de que substituiu o arquivo saldo_por_gestor.xlsx
+    echo Certifique-se de que substituiu o RelatorioBancoHoras.xls por um mais recente.
     echo.
     pause
     exit /b 1
