@@ -35,8 +35,8 @@ echo.
 echo Enviando para o GitHub...
 echo.
 
-:: Adiciona, commita e envia
-git add public/saldo_por_gestor.xlsx
+:: Adiciona forçando (ignora regras do .gitignore para este arquivo)
+git add -f public/saldo_por_gestor.xlsx
 if %errorlevel% neq 0 (
     echo ERRO ao adicionar arquivo!
     pause
