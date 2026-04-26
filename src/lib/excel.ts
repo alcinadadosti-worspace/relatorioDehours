@@ -88,6 +88,7 @@ const GESTOR_MAP: Record<string, string> = {
   'valesca meirelle bezerra vitoria': 'Kemilly Rafaelly Souza Silva',
   'yasmim da rocha bezerra barbosa': 'Jonathan Henrique da Conceição Silva',
   'yasmin abilia ferro da silva': 'Kemilly Rafaelly Souza Silva',
+  'yuri castro gomes': 'Alberto Luiz Marinho Batista',
 };
 
 // Pessoas excluídas da análise (comparação sem acento e sem maiúsculas)
@@ -102,7 +103,6 @@ const EXCLUDED_NAMES = new Set([
   'lianda melinda santos calixto',
   'luis henrique batista dos santos',
   'anderson rosalvo rocha dos santos',
-  'yuri castro gomes',
   'samyra anchieta bispo',
   'cristielle pereira lima da silva',
   'maria tatiane basto cardoso',
