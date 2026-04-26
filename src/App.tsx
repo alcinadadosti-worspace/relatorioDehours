@@ -4,12 +4,13 @@ import { BarChart3, RefreshCw, LogOut } from 'lucide-react';
 import type { AppState, ColaboradorRecord, FilterState } from './lib/types';
 import type { AuthSession } from './lib/auth';
 import { gestorMatches } from './lib/auth';
-import { readExcelFile, parseWorkbookBuffer } from './lib/excel';
+import { readExcelFile, parseWorkbookBuffer, parseGestorMapFromBuffer } from './lib/excel';
 import { groupByGestor, calculateGlobalStats, applyFilters } from './lib/aggregation';
 
 import { Login, Upload, Filters, KPI, GestorChart, RankingChart, ColaboradoresTable } from './components';
 
 const DEFAULT_FILE = '/RelatorioBancoHoras.xls';
+const GESTOR_MAP_FILE = '/Saldos_por_Gestor_Ajustado.xlsx';
 
 export default function App() {
   const [auth, setAuth] = useState<AuthSession | null>(null);
@@ -18,15 +19,23 @@ export default function App() {
   const [, setFileName] = useState<string | null>(null);
   const [allRecords, setAllRecords] = useState<ColaboradorRecord[]>([]);
   const [filters, setFilters] = useState<FilterState>({ searchNome: '', searchGestor: '' });
+  const [gestorMap, setGestorMap] = useState<Record<string, string>>({});
 
   const loadDefaultFile = useCallback(async () => {
     setAppState('loading');
     setError(null);
     try {
-      const res = await fetch(DEFAULT_FILE);
-      if (!res.ok) throw new Error('not found');
-      const buf = new Uint8Array(await res.arrayBuffer());
-      const data = parseWorkbookBuffer(buf);
+      const [relRes, gestorRes] = await Promise.all([
+        fetch(DEFAULT_FILE),
+        fetch(GESTOR_MAP_FILE),
+      ]);
+      if (!relRes.ok) throw new Error('not found');
+      const map = gestorRes.ok
+        ? parseGestorMapFromBuffer(new Uint8Array(await gestorRes.arrayBuffer()))
+        : {};
+      setGestorMap(map);
+      const buf = new Uint8Array(await relRes.arrayBuffer());
+      const data = parseWorkbookBuffer(buf, map);
       setAllRecords(data);
       setFileName('RelatorioBancoHoras.xls');
       setAppState('ready');
@@ -43,7 +52,7 @@ export default function App() {
     setError(null);
     setFileName(file.name);
     try {
-      const data = await readExcelFile(file);
+      const data = await readExcelFile(file, gestorMap);
       setAllRecords(data);
       setFilters({ searchNome: '', searchGestor: '' });
       setAppState('ready');
@@ -51,7 +60,7 @@ export default function App() {
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
       setAppState('error');
     }
-  }, []);
+  }, [gestorMap]);
 
   const handleFilterChange = useCallback((f: Partial<FilterState>) => {
     setFilters((prev) => ({ ...prev, ...f }));

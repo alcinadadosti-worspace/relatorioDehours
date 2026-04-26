@@ -22,20 +22,26 @@ echo Arquivo encontrado: RelatorioBancoHoras.xls
 echo Copiando para public\RelatorioBancoHoras.xls...
 echo.
 
-:: Copia o arquivo para a pasta public (o servidor vai servir este arquivo)
+:: Copia o relatorio para a pasta public
 copy /Y "RelatorioBancoHoras.xls" "public\RelatorioBancoHoras.xls" >nul
 if %errorlevel% neq 0 (
-    echo ERRO ao copiar arquivo!
+    echo ERRO ao copiar RelatorioBancoHoras.xls!
     pause
     exit /b 1
 )
 
-echo Arquivo copiado com sucesso.
+:: Copia o mapa de gestores se existir na raiz (opcional - atualiza equipes)
+if exist "Saldos_por_Gestor_Ajustado.xlsx" (
+    echo Arquivo de gestores encontrado. Atualizando equipes...
+    copy /Y "Saldos_por_Gestor_Ajustado.xlsx" "public\Saldos_por_Gestor_Ajustado.xlsx" >nul
+    git add -f public/Saldos_por_Gestor_Ajustado.xlsx
+)
+
+echo Arquivos copiados com sucesso.
 echo.
 echo Enviando para o GitHub...
 echo.
 
-:: Adiciona forçando (ignora regras do .gitignore para este arquivo)
 git add -f public/RelatorioBancoHoras.xls
 if %errorlevel% neq 0 (
     echo ERRO ao adicionar arquivo!
