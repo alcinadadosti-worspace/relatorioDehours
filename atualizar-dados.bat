@@ -19,11 +19,11 @@ if not exist "RelatorioBancoHoras.xls" (
 )
 
 echo Arquivo encontrado: RelatorioBancoHoras.xls
-echo Copiando para public\saldo_por_gestor.xlsx...
+echo Copiando para public\RelatorioBancoHoras.xls...
 echo.
 
 :: Copia o arquivo para a pasta public (o servidor vai servir este arquivo)
-copy /Y "RelatorioBancoHoras.xls" "public\saldo_por_gestor.xlsx" >nul
+copy /Y "RelatorioBancoHoras.xls" "public\RelatorioBancoHoras.xls" >nul
 if %errorlevel% neq 0 (
     echo ERRO ao copiar arquivo!
     pause
@@ -36,7 +36,7 @@ echo Enviando para o GitHub...
 echo.
 
 :: Adiciona forçando (ignora regras do .gitignore para este arquivo)
-git add -f public/saldo_por_gestor.xlsx
+git add -f public/RelatorioBancoHoras.xls
 if %errorlevel% neq 0 (
     echo ERRO ao adicionar arquivo!
     pause

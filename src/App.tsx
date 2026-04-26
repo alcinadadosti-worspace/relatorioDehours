@@ -9,7 +9,7 @@ import { groupByGestor, calculateGlobalStats, applyFilters } from './lib/aggrega
 
 import { Login, Upload, Filters, KPI, GestorChart, RankingChart, ColaboradoresTable } from './components';
 
-const DEFAULT_FILE = '/saldo_por_gestor.xlsx';
+const DEFAULT_FILE = '/RelatorioBancoHoras.xls';
 
 export default function App() {
   const [auth, setAuth] = useState<AuthSession | null>(null);
@@ -28,7 +28,7 @@ export default function App() {
       const buf = new Uint8Array(await res.arrayBuffer());
       const data = parseWorkbookBuffer(buf);
       setAllRecords(data);
-      setFileName('saldo_por_gestor.xlsx');
+      setFileName('RelatorioBancoHoras.xls');
       setAppState('ready');
     } catch (err) {
       console.error('[loadDefaultFile] erro:', err);
