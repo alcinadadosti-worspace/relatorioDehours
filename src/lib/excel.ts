@@ -27,7 +27,7 @@ const GESTOR_MAP: Record<string, string> = {
   'edna lopes da silva': 'Jonathan Henrique da Conceição Silva',
   'eduarda pereira costa silva': 'Kemilly Rafaelly Souza Silva',
   'eliene da silva santos': 'Maria Taciane Pereira Barbosa',
-  'emanoelle feitosa vieira santos': 'Erick Café Santos Júnior',
+  'emanoelle feitosa vieira santos': 'Joao Antonio Tavares Santos',
   'erick cafe santos junior': 'Romulo Jose Santos Lisboa',
   'fabia batista da silva': 'Joao Antonio Tavares Santos',
   'gessica aparecida dos santos': 'Erick Café Santos Júnior',
@@ -41,10 +41,10 @@ const GESTOR_MAP: Record<string, string> = {
   'joao victor santos da silva': 'Alberto Luiz Marinho Batista',
   'jonathan henrique da conceicao silva': 'Romulo Jose Santos Lisboa',
   'jordelle meygre costa de oliveira': 'Jonathan Henrique da Conceição Silva',
-  'josimara ferreira monteiro': 'Michaell Jean Nunes De Carvalho',
-  'juliene bezerra': 'Michaell Jean Nunes De Carvalho',
+  'josimara ferreira monteiro': 'Ana Clara de Matos Chagas',
+  'juliene bezerra': 'Ana Clara de Matos Chagas',
   'kamilla santos da silva': 'Ana Clara de Matos Chagas',
-  'karine celestino evangelista dos santos': 'Joao Antonio Tavares Santos',
+  'karine celestino evangelista dos santos': 'Erick Café Santos Júnior',
   'kauanne iwashita da silva': 'Erick Café Santos Júnior',
   'lais manuelle santos pereira': 'Erick Café Santos Júnior',
   'larissa alexia da silva souza': 'Kemilly Rafaelly Souza Silva',
@@ -103,6 +103,9 @@ const EXCLUDED_NAMES = new Set([
   'luis henrique batista dos santos',
   'anderson rosalvo rocha dos santos',
   'yuri castro gomes',
+  'samyra anchieta bispo',
+  'cristielle pereira lima da silva',
+  'maria tatiane basto cardoso',
 ]);
 
 // Prefixos que identificam linhas de dados/cabeçalho (não são nomes de colaboradores)
