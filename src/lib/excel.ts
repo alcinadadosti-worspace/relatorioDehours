@@ -3,6 +3,93 @@ import type { ColaboradorRecord } from './types';
 
 const REQUIRED_COLUMNS = ['Gestor', 'Minutos'];
 
+// Mapa nome normalizado → gestor (baseado em Saldos_por_Gestor_Ajustado.xlsx)
+const GESTOR_MAP: Record<string, string> = {
+  'alberto guilherme da silva martins': 'Sem Gestor',
+  'amanda santos costa': 'Michaell Jean Nunes De Carvalho',
+  'ana clara de matos chagas': 'Romulo Jose Santos Lisboa',
+  'ana luiza dos santos': 'Erick Café Santos Júnior',
+  'ana paula amaral santos ismerim': 'Maria Taciane Pereira Barbosa',
+  'ane caroline pereira marter': 'Ana Clara de Matos Chagas',
+  'anny karoline andrade santos': 'Mariane Santos Sousa',
+  'bruna candido de lima': 'Jonathan Henrique da Conceição Silva',
+  'bruna rayane oliveira dos santos': 'Maria Taciane Pereira Barbosa',
+  'brunna isabelly silva lima': 'Sem Gestor',
+  'caique dos santos da silva': 'Alberto Luiz Marinho Batista',
+  'camilla emanuelle lopes de almeida': 'Jonathan Henrique da Conceição Silva',
+  'camille kauane da silva nunes': 'Maria Taciane Pereira Barbosa',
+  'carlos eduardo silva de oliveira': 'Carlos Eduardo Silva De Oliveira',
+  'claudio bispo dos santos': 'Alberto Luiz Marinho Batista',
+  'cristielle pereira lima da silva': 'Maria Taciane Pereira Barbosa',
+  'danielle dos santos silva': 'Jonathan Henrique da Conceição Silva',
+  'danrley firmino dos santos': 'Alberto Luiz Marinho Batista',
+  'deise gislaine silva vitor': 'Maria Taciane Pereira Barbosa',
+  'edna lopes da silva': 'Jonathan Henrique da Conceição Silva',
+  'eduarda pereira costa silva': 'Kemilly Rafaelly Souza Silva',
+  'eliene da silva santos': 'Maria Taciane Pereira Barbosa',
+  'emanoelle feitosa vieira santos': 'Erick Café Santos Júnior',
+  'erick cafe santos junior': 'Romulo Jose Santos Lisboa',
+  'fabia batista da silva': 'Joao Antonio Tavares Santos',
+  'gessica aparecida dos santos': 'Erick Café Santos Júnior',
+  'gessyca nayara rocha santos': 'Joao Antonio Tavares Santos',
+  'giselle dos santos roberto': 'Erick Café Santos Júnior',
+  'hugo castro lopes': 'Alberto Luiz Marinho Batista',
+  'jaine mariana rodrigues mendonca': 'Joao Antonio Tavares Santos',
+  'joanna roberta de queiroz viana': 'Sem Gestor',
+  'joao antonio tavares santos': 'Romulo Jose Santos Lisboa',
+  'joao ricardo dantas albuquerque': 'Suzana Martins Tavares',
+  'joao victor santos da silva': 'Alberto Luiz Marinho Batista',
+  'jonathan henrique da conceicao silva': 'Romulo Jose Santos Lisboa',
+  'jordelle meygre costa de oliveira': 'Jonathan Henrique da Conceição Silva',
+  'josimara ferreira monteiro': 'Michaell Jean Nunes De Carvalho',
+  'juliene bezerra': 'Michaell Jean Nunes De Carvalho',
+  'kamilla santos da silva': 'Ana Clara de Matos Chagas',
+  'karine celestino evangelista dos santos': 'Joao Antonio Tavares Santos',
+  'kauanne iwashita da silva': 'Erick Café Santos Júnior',
+  'lais manuelle santos pereira': 'Erick Café Santos Júnior',
+  'larissa alexia da silva souza': 'Kemilly Rafaelly Souza Silva',
+  'lays da silva vieira': 'Jonathan Henrique da Conceição Silva',
+  'leticia seixas santos': 'Erick Café Santos Júnior',
+  'leticia soares belo': 'Rafaela Alves Mendes',
+  'luan santos de oliveira': 'Jonathan Henrique da Conceição Silva',
+  'luciane da silva nascimento': 'Erick Café Santos Júnior',
+  'luciene da silva nascimento': 'Erick Café Santos Júnior',
+  'luciano torres': 'Alberto Luiz Marinho Batista',
+  'ludmylla wolpert melo': 'Alberto Luiz Marinho Batista',
+  'luiz fellipe guedes santos silva': 'Alberto Luiz Marinho Batista',
+  'marcio alif santos silva': 'Alberto Luiz Marinho Batista',
+  'mariane santos sousa': 'Leidiane Souza',
+  'marilia alice dos santos silva': 'Jonathan Henrique da Conceição Silva',
+  'maria cicilia brito veiga': 'Kemilly Rafaelly Souza Silva',
+  'maria jeane da silva santos': 'Ana Clara de Matos Chagas',
+  'maria nobre farias de franca': 'Michaell Jean Nunes De Carvalho',
+  'maria taciane pereira barbosa': 'Sem Gestor',
+  'maria tatiane basto cardoso': 'Maria Taciane Pereira Barbosa',
+  'maria tatiane oliveira santos': 'Joao Antonio Tavares Santos',
+  'maria victoria souza araujo ferro': 'Jonathan Henrique da Conceição Silva',
+  'maryanna francielly trajano da silva': 'Kemilly Rafaelly Souza Silva',
+  'natali de souza gonzaga': 'Erick Café Santos Júnior',
+  'nathalia vieira lima': 'Erick Café Santos Júnior',
+  'paulo cesar da silva santos junior': 'Alberto Luiz Marinho Batista',
+  'pedro lucas rocha da fonseca': 'Alberto Luiz Marinho Batista',
+  'ravy thiago vieira da silva': 'Suzana Martins Tavares',
+  'roberia gilo da silva': 'Alberto Luiz Marinho Batista',
+  'rodrigo augusto teixeira dos santos': 'Ana Clara de Matos Chagas',
+  'romulo jose santos lisboa': 'Sem Gestor',
+  'rosilene martins da silva': 'Alberto Luiz Marinho Batista',
+  'sabrina domingos santos': 'Erick Café Santos Júnior',
+  'samyra anchieta bispo': 'Maria Taciane Pereira Barbosa',
+  'sandra da conceicao freitas': 'Ana Clara de Matos Chagas',
+  'thalys gomes dos santos': 'Alberto Luiz Marinho Batista',
+  'thamires emanuelle da silva': 'Ana Clara de Matos Chagas',
+  'thamirys silvestrini morales': 'Maria Taciane Pereira Barbosa',
+  'thayane mayara dos santos': 'Suzana Martins Tavares',
+  'tomas azevedo santos': 'Michaell Jean Nunes De Carvalho',
+  'valesca meirelle bezerra vitoria': 'Kemilly Rafaelly Souza Silva',
+  'yasmim da rocha bezerra barbosa': 'Jonathan Henrique da Conceição Silva',
+  'yasmin abilia ferro da silva': 'Kemilly Rafaelly Souza Silva',
+};
+
 // Pessoas excluídas da análise (comparação sem acento e sem maiúsculas)
 const EXCLUDED_NAMES = new Set([
   'leidiane souza',
@@ -112,12 +199,8 @@ function parseReportFormat(rows: unknown[][]): ColaboradorRecord[] {
       const saldoTotal = formatTimeString(rawBalance);
 
       if (!isExcluded(currentName)) {
-        records.push({
-          nome: currentName,
-          gestor: 'Fernando Ramos',
-          saldoTotal,
-          minutos,
-        });
+        const gestor = GESTOR_MAP[normalizeForExclusion(currentName)] ?? 'Sem Gestor';
+        records.push({ nome: currentName, gestor, saldoTotal, minutos });
       }
       currentName = null;
     }
@@ -179,10 +262,7 @@ function parseWorkbook(wb: XLSX.WorkBook): ColaboradorRecord[] {
     for (const row of tabRows) {
       const nome = String(row[colNome] ?? '').trim();
       const gestorRaw = String(row[colGestor] ?? '').trim();
-      const gestor =
-        !gestorRaw || gestorRaw.toLowerCase() === 'sem gestor'
-          ? 'Fernando Ramos'
-          : gestorRaw;
+      const gestor = !gestorRaw ? 'Sem Gestor' : gestorRaw;
       const saldoTotal = colSaldo ? String(row[colSaldo] ?? '').trim() : '';
       const minutos = Number(row[colMinutos] ?? 0);
 
