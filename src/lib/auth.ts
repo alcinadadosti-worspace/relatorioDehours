@@ -16,7 +16,7 @@ export const AUTH_MAP: Record<string, string[]> = {
     'Maria Taciane Pereira Barbosa',
     'Mariane Santos Sousa',
   ],
-  '1212': ['Michaell Jean Nunes De Carvalho'],
+  '1212': ['Tomás Azevedo Santos'],
   '1515': ['Suzana Martins Tavares'],
   '3232': ['Rafaela Alves Mendes'],
   '7777': ['Carlos Eduardo Silva De Oliveira'],
@@ -35,7 +35,7 @@ export const BIRTH_MONTH: Record<string, number> = {
   'Kemilly Rafaelly Souza Silva':         5,  // maio
   'Maria Taciane Pereira Barbosa':        5,  // maio
   'Mariane Santos Sousa':                 4,  // abril
-  'Michaell Jean Nunes De Carvalho':      2,  // fevereiro
+  'Tomás Azevedo Santos':                 1,  // janeiro
   'Suzana Martins Tavares':               4,  // abril
   'Rafaela Alves Mendes':                 5,  // maio
   'Carlos Eduardo Silva De Oliveira':     1,  // janeiro
