@@ -7,7 +7,7 @@ import { gestorMatches } from './lib/auth';
 import { readExcelFile, parseWorkbookBuffer, parseGestorMapFromBuffer } from './lib/excel';
 import { groupByGestor, calculateGlobalStats, applyFilters } from './lib/aggregation';
 
-import { Login, Upload, Filters, KPI, GestorChart, RankingChart, ColaboradoresTable } from './components';
+import { Login, Upload, Filters, KPI, GestorChart, RankingChart, ColaboradoresTable, Observacoes } from './components';
 
 const DEFAULT_FILE = '/RelatorioBancoHoras.xls';
 const GESTOR_MAP_FILE = '/Saldos_por_Gestor_Ajustado.xlsx';
@@ -167,6 +167,7 @@ export default function App() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white text-center mb-8 tracking-tight">
               Relatório de Pontos ajustados até o dia 19/07
             </h2>
+            <Observacoes />
             <KPI stats={globalStats} />
 
             <Filters
