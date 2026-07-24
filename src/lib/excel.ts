@@ -10,7 +10,6 @@ const EXCLUDED_NAMES = new Set([
   'cledjon dias dos santos',
   'paulo rogerio santos',
   'millena sthefany dos santos cruz',
-  'lianda melinda santos calixto',
   'luis henrique batista dos santos',
   'anderson rosalvo rocha dos santos',
   'samyra anchieta bispo',
