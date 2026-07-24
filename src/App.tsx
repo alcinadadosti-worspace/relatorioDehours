@@ -167,7 +167,7 @@ export default function App() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white text-center mb-8 tracking-tight">
               Relatório de Pontos ajustados até o dia 19/07
             </h2>
-            <Observacoes />
+            <Observacoes auth={auth} />
             <KPI stats={globalStats} />
 
             <Filters
