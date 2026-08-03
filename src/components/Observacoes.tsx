@@ -8,27 +8,27 @@ interface FlaggedColab {
   gestor: string;
 }
 
-const DIVERGENCIA_SOLIDES: FlaggedColab[] = [
-  { nome: 'Clara Matos', gestor: 'Romulo Jose Santos Lisboa' },
+const EM_MANUTENCAO: FlaggedColab[] = [
+  { nome: 'Ana Clara', gestor: 'Romulo Jose Santos Lisboa' },
   { nome: 'Jonathan Henrique', gestor: 'Romulo Jose Santos Lisboa' },
 ];
 
 const DIVERGENCIA_AJUSTE_GESTOR: FlaggedColab[] = [
-  { nome: 'Emanoelle Vieira', gestor: 'Joao Antonio Tavares Santos' },
   { nome: 'Danrley', gestor: 'Alberto Luiz Marinho Batista' },
   { nome: 'Ludmylla Wolpert', gestor: 'Alberto Luiz Marinho Batista' },
   { nome: 'Márcio Alif', gestor: 'Alberto Luiz Marinho Batista' },
   { nome: 'Paulo Cesar', gestor: 'Alberto Luiz Marinho Batista' },
   { nome: 'Rosilene Martins', gestor: 'Alberto Luiz Marinho Batista' },
-  { nome: 'Maria Nobre', gestor: 'Tomás Azevedo Santos' },
   { nome: 'Erick Café', gestor: 'Romulo Jose Santos Lisboa' },
-  { nome: 'Bruna Rayane', gestor: 'Maria Taciane Pereira Barbosa' },
-  { nome: 'Caroline Leite', gestor: 'Kemilly Rafaelly Souza Silva' },
-  { nome: 'Deise Gislane', gestor: 'Maria Taciane Pereira Barbosa' },
-  { nome: 'Eliene', gestor: 'Maria Taciane Pereira Barbosa' },
-  { nome: 'Joanna Queiroz', gestor: 'Maria Taciane Pereira Barbosa' },
-  { nome: 'Fernanda Vieira', gestor: 'Maria Taciane Pereira Barbosa' },
-  { nome: 'Rayanne Ferreira', gestor: 'Kemilly Rafaelly Souza Silva' },
+];
+
+interface AvisoGestor {
+  gestor: string;
+  mensagem: string;
+}
+
+const AVISOS_GESTOR: AvisoGestor[] = [
+  { gestor: 'Kemilly Rafaelly Souza Silva', mensagem: 'precisa fazer os ajustes do time de Taciane' },
 ];
 
 function visibleFor(list: FlaggedColab[], auth: AuthSession): FlaggedColab[] {
@@ -59,11 +59,14 @@ interface ObservacoesProps {
 export function Observacoes({ auth }: ObservacoesProps) {
   const [open, setOpen] = useState(true);
 
-  const solides = visibleFor(DIVERGENCIA_SOLIDES, auth);
+  const manutencao = visibleFor(EM_MANUTENCAO, auth);
   const ajuste = visibleFor(DIVERGENCIA_AJUSTE_GESTOR, auth);
+  const avisos = auth.isMaster
+    ? AVISOS_GESTOR
+    : AVISOS_GESTOR.filter((a) => gestorMatches(a.gestor, auth.gestorName));
 
   // Gestor sem colaboradores afetados não vê a seção
-  if (solides.length === 0 && ajuste.length === 0) return null;
+  if (manutencao.length === 0 && ajuste.length === 0 && avisos.length === 0) return null;
 
   return (
     <div className="bg-amber-500/5 border border-amber-500/30 rounded-xl mb-6 overflow-hidden">
@@ -84,13 +87,15 @@ export function Observacoes({ auth }: ObservacoesProps) {
 
       {open && (
         <div className="px-5 pb-5 space-y-4">
-          {solides.length > 0 && (
+          {manutencao.length > 0 && (
             <div>
               <p className="text-sm text-dark-300">
-                {solides.length === 1 ? 'O colaborador abaixo vai' : 'Os colaboradores abaixo vão'}{' '}
-                apresentar divergência em seus saldos de horas devido a problema na Solides:
+                {manutencao.length === 1
+                  ? 'O saldo do colaborador abaixo está'
+                  : 'Os saldos dos colaboradores abaixo estão'}{' '}
+                em manutenção:
               </p>
-              <NameChips colabs={solides} showGestor={auth.isMaster} />
+              <NameChips colabs={manutencao} showGestor={auth.isMaster} />
             </div>
           )}
 
@@ -104,6 +109,14 @@ export function Observacoes({ auth }: ObservacoesProps) {
               <NameChips colabs={ajuste} showGestor={auth.isMaster} />
             </div>
           )}
+
+          {avisos.map((a) => (
+            <div key={a.gestor}>
+              <p className="text-sm text-dark-300">
+                {auth.isMaster ? `${a.gestor} ${a.mensagem}.` : `Você ${a.mensagem}.`}
+              </p>
+            </div>
+          ))}
         </div>
       )}
     </div>
