@@ -19,7 +19,6 @@ const DIVERGENCIA_AJUSTE_GESTOR: FlaggedColab[] = [
   { nome: 'Márcio Alif', gestor: 'Alberto Luiz Marinho Batista' },
   { nome: 'Paulo Cesar', gestor: 'Alberto Luiz Marinho Batista' },
   { nome: 'Rosilene Martins', gestor: 'Alberto Luiz Marinho Batista' },
-  { nome: 'Erick Café', gestor: 'Romulo Jose Santos Lisboa' },
 ];
 
 interface AvisoGestor {
