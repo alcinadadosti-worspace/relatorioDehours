@@ -33,10 +33,7 @@ const AVISOS_GESTOR: AvisoGestor[] = [
     gestor: 'Ana Clara de Matos Chagas',
     mensagem: 'está com os pontos da equipe ajustados até o dia 02/08, exceto Brunna Isabelly, que segue em 26/07',
   },
-  {
-    gestor: 'Jonathan Henrique da Conceição Silva',
-    mensagem: 'está com o próprio ponto ajustado até o dia 02/08; a equipe segue ajustada até 26/07',
-  },
+  { gestor: 'Jonathan Henrique da Conceição Silva', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
 ];
 
 function visibleFor(list: FlaggedColab[], auth: AuthSession): FlaggedColab[] {
