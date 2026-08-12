@@ -8,10 +8,7 @@ interface FlaggedColab {
   gestor: string;
 }
 
-const EM_MANUTENCAO: FlaggedColab[] = [
-  { nome: 'Ana Clara', gestor: 'Romulo Jose Santos Lisboa' },
-  { nome: 'Jonathan Henrique', gestor: 'Romulo Jose Santos Lisboa' },
-];
+const EM_MANUTENCAO: FlaggedColab[] = [];
 
 const DIVERGENCIA_AJUSTE_GESTOR: FlaggedColab[] = [
   { nome: 'Danrley', gestor: 'Alberto Luiz Marinho Batista' },
@@ -28,6 +25,18 @@ interface AvisoGestor {
 
 const AVISOS_GESTOR: AvisoGestor[] = [
   { gestor: 'Kemilly Rafaelly Souza Silva', mensagem: 'precisa fazer os ajustes do time de Taciane' },
+  // Times reprocessados com o export de 01/07 a 02/08 — os demais seguem em 26/07
+  { gestor: 'Carlos Eduardo Silva De Oliveira', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
+  { gestor: 'Erick Café Santos Júnior', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
+  { gestor: 'Joao Antonio Tavares Santos', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
+  {
+    gestor: 'Ana Clara de Matos Chagas',
+    mensagem: 'está com os pontos da equipe ajustados até o dia 02/08, exceto Brunna Isabelly, que segue em 26/07',
+  },
+  {
+    gestor: 'Jonathan Henrique da Conceição Silva',
+    mensagem: 'está com o próprio ponto ajustado até o dia 02/08; a equipe segue ajustada até 26/07',
+  },
 ];
 
 function visibleFor(list: FlaggedColab[], auth: AuthSession): FlaggedColab[] {
