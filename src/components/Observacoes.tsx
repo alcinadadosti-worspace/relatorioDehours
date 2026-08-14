@@ -10,13 +10,8 @@ interface FlaggedColab {
 
 const EM_MANUTENCAO: FlaggedColab[] = [];
 
-const DIVERGENCIA_AJUSTE_GESTOR: FlaggedColab[] = [
-  { nome: 'Danrley', gestor: 'Alberto Luiz Marinho Batista' },
-  { nome: 'Ludmylla Wolpert', gestor: 'Alberto Luiz Marinho Batista' },
-  { nome: 'Márcio Alif', gestor: 'Alberto Luiz Marinho Batista' },
-  { nome: 'Paulo Cesar', gestor: 'Alberto Luiz Marinho Batista' },
-  { nome: 'Rosilene Martins', gestor: 'Alberto Luiz Marinho Batista' },
-];
+// Ajustes feitos na atualização de 14/08 — lista zerada
+const DIVERGENCIA_AJUSTE_GESTOR: FlaggedColab[] = [];
 
 interface AvisoGestor {
   gestor: string;
@@ -34,6 +29,13 @@ const AVISOS_GESTOR: AvisoGestor[] = [
     mensagem: 'está com os pontos da equipe ajustados até o dia 02/08, exceto Brunna Isabelly, que segue em 26/07',
   },
   { gestor: 'Jonathan Henrique da Conceição Silva', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
+  { gestor: 'Kemilly Rafaelly Souza Silva', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
+  { gestor: 'Maria Taciane Pereira Barbosa', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
+  { gestor: 'Suzana Martins Tavares', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
+  {
+    gestor: 'Alberto Luiz Marinho Batista',
+    mensagem: 'está com os pontos da equipe ajustados até o dia 02/08, exceto Yuri Castro, que segue em 26/07',
+  },
 ];
 
 function visibleFor(list: FlaggedColab[], auth: AuthSession): FlaggedColab[] {
@@ -115,8 +117,9 @@ export function Observacoes({ auth }: ObservacoesProps) {
             </div>
           )}
 
-          {avisos.map((a) => (
-            <div key={a.gestor}>
+          {avisos.map((a, i) => (
+            // key com indice: um mesmo gestor pode ter mais de um aviso
+            <div key={`${a.gestor}-${i}`}>
               <p className="text-sm text-dark-300">
                 {auth.isMaster ? `${a.gestor} ${a.mensagem}.` : `Você ${a.mensagem}.`}
               </p>

@@ -14,6 +14,7 @@ const EXCLUDED_NAMES = new Set([
   'samyra anchieta bispo',
   'cristielle pereira lima da silva',
   'maria tatiane basto cardoso',
+  'lianda melinda santos calixto',
 ]);
 
 const NON_NAME_PREFIXES = [
