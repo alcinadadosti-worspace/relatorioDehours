@@ -30,7 +30,7 @@ export const BIRTH_MONTH: Record<string, number> = {
   'Erick Café Santos Júnior':             5,  // maio
   'Romulo Jose Santos Lisboa':            7,  // julho
   'Joao Antonio Tavares Santos':          7,  // julho
-  'Ana Clara de Matos Chagas':           12,  // dezembro
+  'Ana Clara de Matos Chagas':           11,  // novembro
   'Jonathan Henrique da Conceição Silva':12,  // dezembro
   'Kemilly Rafaelly Souza Silva':         5,  // maio
   'Maria Taciane Pereira Barbosa':        5,  // maio
