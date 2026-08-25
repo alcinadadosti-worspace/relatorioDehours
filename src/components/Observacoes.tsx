@@ -18,24 +18,20 @@ interface AvisoGestor {
   mensagem: string;
 }
 
+// Export de 01/07 a 16/08 (25/08): o título já diz 16/08, então aqui ficam só
+// as equipes cuja data é diferente da global e as exceções dentro delas.
 const AVISOS_GESTOR: AvisoGestor[] = [
-  { gestor: 'Kemilly Rafaelly Souza Silva', mensagem: 'precisa fazer os ajustes do time de Taciane' },
-  // Times reprocessados com o export de 01/07 a 02/08 — os demais seguem em 26/07
-  { gestor: 'Carlos Eduardo Silva De Oliveira', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
-  { gestor: 'Erick Café Santos Júnior', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
-  { gestor: 'Joao Antonio Tavares Santos', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
-  {
-    gestor: 'Ana Clara de Matos Chagas',
-    mensagem: 'está com os pontos da equipe ajustados até o dia 02/08, exceto Brunna Isabelly, que segue em 26/07',
-  },
-  { gestor: 'Jonathan Henrique da Conceição Silva', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
-  { gestor: 'Kemilly Rafaelly Souza Silva', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
-  { gestor: 'Maria Taciane Pereira Barbosa', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
-  { gestor: 'Suzana Martins Tavares', mensagem: 'está com os pontos da equipe ajustados até o dia 02/08' },
   {
     gestor: 'Alberto Luiz Marinho Batista',
-    mensagem: 'está com os pontos da equipe ajustados até o dia 02/08, exceto Yuri Castro, que segue em 26/07',
+    mensagem:
+      'está com os pontos da equipe ajustados até o dia 14/08, exceto Alberto Guilherme e Caique dos Santos, que seguem em 02/08',
   },
+  {
+    gestor: 'Erick Café Santos Júnior',
+    mensagem:
+      'está com os pontos da equipe ajustados até o dia 07/08, exceto Sabrina Domingos, que segue em 02/08',
+  },
+  { gestor: 'Suzana Martins Tavares', mensagem: 'está com os pontos da equipe ajustados até o dia 13/08' },
 ];
 
 function visibleFor(list: FlaggedColab[], auth: AuthSession): FlaggedColab[] {
