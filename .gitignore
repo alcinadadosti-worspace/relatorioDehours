@@ -28,3 +28,6 @@ npm-debug.log*
 # Excel files (except public data)
 *.xlsx
 !public/saldo_por_gestor.xlsx
+
+# Backups do scripts/aplicar-folha-ponto.cjs
+*.bak
