@@ -18,12 +18,24 @@ interface AvisoGestor {
   mensagem: string;
 }
 
-// Exports de 01/07 a 13/09 (25/09): o título já diz 13/09, então aqui ficam só
-// as equipes cuja data é diferente da global.
+// Export de 01/07 a 27/09 (09/10): o título já diz 27/09, então aqui ficam só
+// as exceções — quem não veio no export e segue com o saldo dos exports por equipe.
 const AVISOS_GESTOR: AvisoGestor[] = [
-  { gestor: 'Carlos Eduardo Silva De Oliveira', mensagem: 'está com os pontos da equipe ajustados até o dia 03/09' },
-  { gestor: 'Kemilly Rafaelly Souza Silva', mensagem: 'está com os pontos da equipe ajustados até o dia 03/09' },
-  { gestor: 'Maria Taciane Pereira Barbosa', mensagem: 'está com os pontos da equipe ajustados até o dia 09/09' },
+  {
+    gestor: 'Ana Clara de Matos Chagas',
+    mensagem:
+      'está com os pontos da equipe ajustados até o dia 27/09, exceto Amanda de Araújo Santos, que segue em 13/09',
+  },
+  {
+    gestor: 'Jonathan Henrique da Conceição Silva',
+    mensagem:
+      'está com os pontos da equipe ajustados até o dia 27/09, exceto Camilla Emanuelle Lopes de Almeida, que segue em 13/09',
+  },
+  {
+    gestor: 'Maria Taciane Pereira Barbosa',
+    mensagem:
+      'está com os pontos da equipe ajustados até o dia 27/09, exceto Joanna Roberta de Queiroz Viana, que segue em 09/09',
+  },
 ];
 
 function visibleFor(list: FlaggedColab[], auth: AuthSession): FlaggedColab[] {

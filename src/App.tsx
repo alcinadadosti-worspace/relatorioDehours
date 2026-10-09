@@ -165,7 +165,7 @@ export default function App() {
         {appState === 'ready' && globalStats && (
           <>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white text-center mb-8 tracking-tight">
-              Relatórios de Pontos foram ajustados até o dia 13/09
+              Relatórios de Pontos foram ajustados até o dia 27/09
             </h2>
             <Observacoes auth={auth} />
             <KPI stats={globalStats} />
