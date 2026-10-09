@@ -19,6 +19,10 @@ const EXCLUDED_NAMES = new Set([
   'raquele fragoso da silva',
   'brunna isabelly silva lima',
   'yuri castro gomes',
+  'amanda de araujo santos',
+  'camilla emanuelle lopes de almeida',
+  'joanna roberta de queiroz viana',
+  'juliene reis ferreira',
 ]);
 
 const NON_NAME_PREFIXES = [
