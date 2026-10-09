@@ -18,10 +18,11 @@ interface AvisoGestor {
   mensagem: string;
 }
 
-// Export de 01/07 a 27/09 (09/10): todas as equipes estão na data do título.
-// As únicas exceções eram as 4 demitidas que não vieram no export, já removidas
-// do painel — lista zerada
-const AVISOS_GESTOR: AvisoGestor[] = [];
+// Export de 01/07 a 27/09 (09/10): todas as equipes estão na data do título,
+// menos a do Alberto Marinho, que não teve os ajustes feitos até 27/09
+const AVISOS_GESTOR: AvisoGestor[] = [
+  { gestor: 'Alberto Luiz Marinho Batista', mensagem: 'ainda não está com os pontos da equipe ajustados até o dia 27/09' },
+];
 
 function visibleFor(list: FlaggedColab[], auth: AuthSession): FlaggedColab[] {
   if (auth.isMaster) return list;
