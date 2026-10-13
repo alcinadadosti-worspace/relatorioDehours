@@ -18,10 +18,10 @@ interface AvisoGestor {
   mensagem: string;
 }
 
-// Export de 01/07 a 27/09 (09/10): todas as equipes estão na data do título,
-// menos a do Alberto Marinho, que não teve os ajustes feitos até 27/09
+// Export de 01/07 a 04/10 (13/10): todas as equipes estão na data do título,
+// mas a do Erick Café ainda tem pontos de colaboradores pendentes de ajuste
 const AVISOS_GESTOR: AvisoGestor[] = [
-  { gestor: 'Alberto Luiz Marinho Batista', mensagem: 'ainda não está com os pontos da equipe ajustados até o dia 27/09' },
+  { gestor: 'Erick Café Santos Júnior', mensagem: 'tem alguns pontos de colaboradores da equipe que precisam ser ajustados' },
 ];
 
 function visibleFor(list: FlaggedColab[], auth: AuthSession): FlaggedColab[] {
