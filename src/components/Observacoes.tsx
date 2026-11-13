@@ -18,10 +18,14 @@ interface AvisoGestor {
   mensagem: string;
 }
 
-// Export de 01/07 a 04/10 (13/10): todas as equipes estão na data do título,
-// mas a do Erick Café ainda tem pontos de colaboradores pendentes de ajuste
+// Export de 01/08 a 31/10 (13/11): todas as equipes estão na data do título,
+// exceto três colaboradoras da Keliany Cordeiro
 const AVISOS_GESTOR: AvisoGestor[] = [
-  { gestor: 'Erick Café Santos Júnior', mensagem: 'tem alguns pontos de colaboradores da equipe que precisam ser ajustados' },
+  {
+    gestor: 'Keliany Cordeiro',
+    mensagem:
+      'ainda não está com os pontos de Edlane Silva de Lima, Maria Cicília Brito Veiga e Yasmin Abilia Ferro da Silva ajustados até o dia 31/10',
+  },
 ];
 
 function visibleFor(list: FlaggedColab[], auth: AuthSession): FlaggedColab[] {
