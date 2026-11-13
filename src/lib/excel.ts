@@ -23,6 +23,9 @@ const EXCLUDED_NAMES = new Set([
   'camilla emanuelle lopes de almeida',
   'joanna roberta de queiroz viana',
   'juliene reis ferreira',
+  'josenildo alves da silva junior',
+  'maria fernanda gomes vieira',
+  'maria tatiane oliveira santos',
 ]);
 
 const NON_NAME_PREFIXES = [
