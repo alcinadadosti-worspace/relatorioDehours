@@ -26,6 +26,7 @@ const EXCLUDED_NAMES = new Set([
   'josenildo alves da silva junior',
   'maria fernanda gomes vieira',
   'maria tatiane oliveira santos',
+  'alekson fernandes moura', // trabalha, mas não bate ponto
 ]);
 
 const NON_NAME_PREFIXES = [
