@@ -18,15 +18,8 @@ interface AvisoGestor {
   mensagem: string;
 }
 
-// Export de 01/08 a 31/10 (13/11): todas as equipes estão na data do título,
-// exceto três colaboradoras da Keliany Cordeiro
-const AVISOS_GESTOR: AvisoGestor[] = [
-  {
-    gestor: 'Keliany Cordeiro',
-    mensagem:
-      'ainda não está com os pontos de Edlane Silva de Lima, Maria Cicília Brito Veiga e Yasmin Abilia Ferro da Silva ajustados até o dia 31/10',
-  },
-];
+// Export de 01/10 a 08/11 (18/11): todas as equipes estão na data do título
+const AVISOS_GESTOR: AvisoGestor[] = [];
 
 function visibleFor(list: FlaggedColab[], auth: AuthSession): FlaggedColab[] {
   if (auth.isMaster) return list;
