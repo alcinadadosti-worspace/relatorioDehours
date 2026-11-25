@@ -16,6 +16,8 @@ export const AUTH_MAP: Record<string, string[]> = {
     'Maria Taciane Pereira Barbosa',
     'Mariane Santos Sousa',
     'Keliany Cordeiro',
+    'Gessica Aparecida Dos Santos',
+    'Jordelle Meygre Costa De Oliveira',
   ],
   '1212': ['Tomás Azevedo Santos'],
   '1515': ['Suzana Martins Tavares'],
